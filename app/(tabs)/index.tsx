@@ -1,51 +1,100 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
+import { Image, StyleSheet, View, Text, TextInput, TouchableOpacity, Dimensions, Modal } from 'react-native';
+import { useState } from 'react';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import Note from '@/components/Note';
+import { Ionicons } from '@expo/vector-icons';
+import staticData from '@/data/note';
+import { loadFonts } from '@/components/Fonts';
+
+const screenWidth = Dimensions.get('screen').width;
 
 export default function HomeScreen() {
+  const fontsLoaded = loadFonts();
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredNotes, setFilteredNotes] = useState(staticData);
+  const [sortModalVisible, setSortModalVisible] = useState(false);
+  const [sortOrder, setSortOrder] = useState('newest');
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query) {
+      const filtered = staticData.filter((note) =>
+        note.title.toLowerCase().includes(query.toLowerCase()) ||
+        note.body.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredNotes(filtered);
+    } else {
+      setFilteredNotes(staticData);
+    }
+  };
+
+  const handleSort = (order: string) => {
+    setSortOrder(order);
+    setSortModalVisible(false);
+
+    const sortedNotes = [...filteredNotes].sort((a, b) => {
+      const dateA = new Date(a.accessedDate).getTime();
+      const dateB = new Date(b.accessedDate).getTime();
+      return order === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+
+    setFilteredNotes(sortedNotes);
+  };
+
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#FEFDED', dark: '#1D3D47' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={require('@/assets/images/app-background.png')}
+          style={{}}
         />
       }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
+      <Text style={styles.homeText}> Your Note</Text>
+
+      <View style={styles.searchAndFilter}>
+        <View style={styles.searchBox}>
+          <Ionicons name='search-outline' style={{ fontSize: 20, color: 'grey' }} />
+          <TextInput
+            placeholder="Search notes..."
+            value={searchQuery}
+            onChangeText={handleSearch}
+            style={styles.searchInput}
+          />
+        </View>
+
+        <TouchableOpacity onPress={() => setSortModalVisible(true)}>
+          <Ionicons name='filter' style={{ fontSize: 25, color: 'grey' }} />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.homeBody}>
+        {filteredNotes.map((note, index) => (
+          <Note key={index} title={note.title} body={note.body} accessedDate={note.accessedDate} />
+        ))}
+      </View>
+
+      <Modal
+        transparent={true}
+        visible={sortModalVisible}
+        animationType="slide"
+        onRequestClose={() => setSortModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity onPress={() => handleSort('newest')} style={styles.modalOption}>
+              <Text style={styles.modalText}>Newest First</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleSort('oldest')} style={styles.modalOption}>
+              <Text style={styles.modalText}>Oldest First</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setSortModalVisible(false)} style={styles.modalOption}>
+              <Text style={styles.modalText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ParallaxScrollView>
   );
 }
@@ -66,5 +115,55 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  homeText: {
+    color: '#4F6F52',
+    fontFamily: 'Dosis-ExtraBold',
+    fontSize: 40,
+    shadowColor: '#4F6F52',
+    shadowOpacity: 0.12,
+  },
+  homeBody: {
+    marginTop: 10,
+    gap: 15,
+  },
+  searchAndFilter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  searchBox: {
+    flexDirection: 'row',
+    height: 40,
+    width: screenWidth * 0.8,
+    alignItems: 'center',
+    gap: 5,
+    borderColor: 'grey',
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+  },
+  searchInput: {
+    flex: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  modalOption: {
+    padding: 15,
+  },
+  modalText: {
+    fontFamily: 'Dosis-Medium',
+    fontSize: 18,
+    textAlign: 'center',
   },
 });

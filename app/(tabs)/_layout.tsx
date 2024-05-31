@@ -1,6 +1,5 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -13,6 +12,9 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
+        tabBarStyle: {
+          backgroundColor: '#FEFDED'
+        }
       }}>
       <Tabs.Screen
         name="index"
@@ -21,15 +23,33 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
           ),
+          tabBarLabelStyle: {
+            fontFamily: 'Dosis-ExtraBold',
+          }
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="image-scan"
         options={{
-          title: 'Explore',
+          title: 'OCR',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+            <TabBarIcon name={focused ? 'camera' : 'camera-outline'} color={color} />
           ),
+          tabBarLabelStyle: {
+            fontFamily: 'Dosis-ExtraBold'
+          }
+        }}
+      />
+      <Tabs.Screen
+        name="user-info"
+        options={{
+          title: 'Me', 
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'person-circle' : 'person-circle-outline'} color={color} />
+          ),
+          tabBarLabelStyle: {
+            fontFamily: 'Dosis-ExtraBold'
+          }
         }}
       />
     </Tabs>
