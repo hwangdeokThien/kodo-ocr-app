@@ -1,6 +1,6 @@
-import { Camera, CameraView, useCameraPermissions } from "expo-camera";
+import { Camera, CameraView, useCameraPermissions, CameraCapturedPicture } from "expo-camera";
 import { CameraType } from "expo-camera/build/legacy/Camera.types";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Image,
   StyleSheet,
@@ -31,6 +31,7 @@ export default function ImageScan() {
   const [facing, setFacing] = useState(CameraType.back);
   const [image, setImage] = useState<string | null>(null);
   const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = useRef<CameraView>(null);
 
   const permissionAlert = () =>
     Alert.alert(
@@ -55,10 +56,20 @@ export default function ImageScan() {
 
   const handlePalletteClick = () => {};
 
-  const handleTakePhoto = () => {
+  const handleTakePhoto = async () => {
     const havePermission = checkPermission();
     if (havePermission) {
-    } else {
+      if (cameraRef.current) {
+        const options = { quality: 1 };
+        try {
+          const picture: CameraCapturedPicture | undefined = await cameraRef.current.takePictureAsync(options);
+          if (picture) {
+            console.log(picture.uri); // uri of the captured image
+          }
+        } catch (error) {
+          console.error('Error taking picture:', error);
+        }
+      }
     }
   };
 
@@ -160,7 +171,7 @@ export default function ImageScan() {
             />
           ) : permission.granted ? (
             <View style={styles.container}>
-              <CameraView style={styles.camera} facing={facing} />
+              <CameraView style={styles.camera} facing={facing} ref={cameraRef}/>
             </View>
           ) : (
             <View style={styles.noCameraContainer}>
@@ -193,7 +204,7 @@ export default function ImageScan() {
 
           <TouchableOpacity
             style={{ shadowColor: "#40A578", shadowOpacity: 0.1 }}
-            onPress={handleVerifyImage}
+            onPress={handleTakePhoto}
           >
             <FontAwesomeIcon icon={faCircleCheck} size={60} color="#40A578" />
           </TouchableOpacity>
