@@ -2,7 +2,20 @@
 
 This is my personal OCR application, using react native technology, combining with expo for the app platform.
 
-## Get started
+## Running backend
+
+1. Install packages
+
+    ```bash
+    bun install
+    ```
+
+2. Start the server
+    ```bash
+    bun start
+    ```
+
+## Running frontend
 
 1. Install dependencies
 
