@@ -3,23 +3,32 @@ import { useEffect } from "react";
 import { View, Dimensions, Text } from "react-native";
 import { StyleSheet, Image } from "react-native";
 import { loadFonts } from "@/components/Fonts";
+import InfoItem from "@/components/UserInfoItem";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 
 type UserInfoProps = {
     username: string;
     name: string;
     email: string;
+    bio: string;
     avatar?: string;
+    dateOfBirth?: Date;
+    location?: string;
+    createdAt?: Date;
 };
 
 const screenWidth = Dimensions.get("screen").width;
 
-const id = "666a6cb533295f9308dacdb7";
+const id = "666af03498a1b21ae5b96fb5";
 const staticData: UserInfoProps = {
     username: "Unkown",
     name: "Unkown",
     email: "Unkown",
-    avatar: "Unkown",
+    bio: "",
+    avatar: undefined,
+    dateOfBirth: undefined,
+    location: "Unknown",
+    createdAt: undefined,
 };
 
 export default function UserInfoScreen() {
@@ -46,18 +55,30 @@ export default function UserInfoScreen() {
                     );
                 }
 
+                const parseStringToObject = (
+                    str: string
+                ): Record<string, any> => {
+                    const obj: Record<string, any> = {};
+                    const pairs = str.match(/(\w+):\s*'(.*?)'/g);
+
+                    if (pairs) {
+                        pairs.forEach((pair) => {
+                            const [key, value] = pair.split(/:\s*'/);
+                            const cleanKey = key.trim();
+                            const cleanValue = value.replace(/'$/, "").trim();
+                            obj[cleanKey] = cleanValue;
+                        });
+                    }
+
+                    return obj;
+                };
+
                 const textData = await response.text();
-                const jsonData = JSON.parse(
-                    textData
-                        .replace(/ObjectId\('(\w+)'\)/g, '"$1"')
-                        .replace(/(\w+):/g, '"$1":')
-                        .replace(/'/g, '"')
-                        .replace("new ", "")
-                );
-                const { username, name, email } = jsonData;
-                const userInfo = { username, name, email } as UserInfoProps;
-                // console.log(userInfo);
-                setUserInfo(userInfo);
+                console.log(textData);
+
+                const userData = parseStringToObject(textData) as UserInfoProps;
+                console.log(userData);
+                setUserInfo(userData);
             } catch (err) {
                 console.log(`Error fetching user information: ${err}`);
             }
@@ -77,12 +98,25 @@ export default function UserInfoScreen() {
             }
         >
             <View>
-                <Image
-                    source={require("@/assets/images/profile-picture.jpeg")}
-                    style={styles.avatarFrame}
-                />
+                {userInfo.avatar ? (
+                    <Image
+                        style={styles.avatarFrame}
+                        source={{ uri: userInfo.avatar }}
+                        resizeMode="contain"
+                    />
+                ) : (
+                    <Image
+                        style={styles.avatarFrame}
+                        source={require("@/assets/images/unknown_user.jpeg")}
+                    />
+                )}
                 <Text style={styles.userName}>{userInfo.name}</Text>
-                <Text style={styles.userEmail}>{userInfo.email}</Text>
+                <Text style={styles.userBio}>{userInfo.bio}</Text>
+                <View style={styles.userInfoBox}>
+                    {Object.entries(userInfo).map(([field, value]) => (
+                        <InfoItem key={field} field={field} value={value} />
+                    ))}
+                </View>
             </View>
         </ParallaxScrollView>
     );
@@ -115,10 +149,17 @@ const styles = StyleSheet.create({
         fontSize: 35,
         alignSelf: "center",
     },
-    userEmail: {
+    userBio: {
         fontFamily: "Dosis-Regular",
         fontSize: 15,
         alignSelf: "center",
         color: "grey",
+    },
+    userInfoBox: {
+        marginTop: 10,
+        borderColor: "grey",
+        borderWidth: 2,
+        borderRadius: 10,
+        backgroundColor: "white",
     },
 });

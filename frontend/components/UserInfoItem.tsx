@@ -1,33 +1,48 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { format, parseISO } from "date-fns";
 
-export type NoteProps = {
-    title: string;
-    content: string;
-    accessedDate: string;
+export type ItemProps = {
+    field: string;
+    value: string | Date;
 };
 
-const Note = ({ title, content, accessedDate }: NoteProps) => {
-    const formattedDate = new Date(accessedDate).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-    });
+type StringMap = {
+    [field: string]: keyof typeof Ionicons.glyphMap;
+};
+
+const iconTagForField: StringMap = {
+    username: "happy-outline",
+    email: "mail-outline",
+    dateOfBirth: "planet-outline",
+    location: "navigate-outline",
+};
+
+const InfoItem = ({ field, value }: ItemProps) => {
+    const formatISODate = (isoDate: string): string => {
+        const date = parseISO(isoDate);
+        return format(date, "MMM dd, yyyy");
+    };
+
+    const displayValue =
+        value instanceof Date ? formatISODate(value.toISOString()) : value;
+
+    const handleTouch = () => {
+        return value;
+    };
+
+    console.log(field);
+
     return (
-        <TouchableOpacity style={styles.cardContainer}>
-            <View style={styles.cardHeader}>
-                <View style={{ flexDirection: "row" }}>
-                    <Ionicons name="newspaper" style={styles.iconHeader} />
-                    <Text style={styles.cardHeaderText}>{title}</Text>
-                </View>
-                <Text style={styles.dateFormat}>{formattedDate}</Text>
+        <TouchableOpacity onPress={handleTouch}>
+            <View style={styles.iconContainer}>
+                <Ionicons
+                    name={iconTagForField[field]}
+                    style={styles.iconStyle}
+                />
             </View>
-            <View style={styles.cardContent}>
-                <Text style={styles.cardContentText} numberOfLines={4}>
-                    {content}
-                </Text>
-            </View>
+            <View></View>
         </TouchableOpacity>
     );
 };
@@ -42,7 +57,12 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         shadowOpacity: 0.1,
     },
-    iconHeader: {
+    iconContainer: {
+        height: 30,
+        width: 30,
+        backgroundColor: "transparent",
+    },
+    iconStyle: {
         fontSize: 25,
         color: "white",
     },
@@ -81,4 +101,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Note;
+export default InfoItem;
