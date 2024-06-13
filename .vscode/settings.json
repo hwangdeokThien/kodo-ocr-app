@@ -1,6 +1,0 @@
-{
-    "git.ignoreLimitWarning": true,
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "terminal.integrated.fontFamily": "MesloLGS NF",
-    "editor.formatOnSave": true
-}
