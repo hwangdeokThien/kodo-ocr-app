@@ -1,25 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import { View, Dimensions, Text } from "react-native";
 import { StyleSheet, Image } from "react-native";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { loadFonts } from "@/components/Fonts";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
 
 type UserInfoProps = {
+    username: string;
     name: string;
     email: string;
-    profilePicture: string;
+    avatar?: string;
 };
 
 const screenWidth = Dimensions.get("screen").width;
 
+const id = "666a6cb533295f9308dacdb7";
+const staticData: UserInfoProps = {
+    username: "Unkown",
+    name: "Unkown",
+    email: "Unkown",
+    avatar: "Unkown",
+};
+
 export default function UserInfoScreen() {
     const fontsLoaded = loadFonts();
-    const userData: UserInfoProps = {
-        name: "Duc Thien",
-        email: "huynhducthien41906@gmail.com",
-        profilePicture:
-            "https://drive.google.com/thumbnail?id=1G3Wu0VyYEZHWueHvCAaAQVBSXZmOO0FN",
-    };
+    const [userInfo, setUserInfo] = useState<UserInfoProps>(staticData);
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const response = await fetch(
+                    `http://localhost:3009/api/users/${id}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Error fetching user data: ${response.status}`
+                    );
+                }
+
+                const textData = await response.text();
+                const jsonData = JSON.parse(
+                    textData
+                        .replace(/ObjectId\('(\w+)'\)/g, '"$1"')
+                        .replace(/(\w+):/g, '"$1":')
+                        .replace(/'/g, '"')
+                        .replace("new ", "")
+                );
+                const { username, name, email } = jsonData;
+                const userInfo = { username, name, email } as UserInfoProps;
+                // console.log(userInfo);
+                setUserInfo(userInfo);
+            } catch (err) {
+                console.log(`Error fetching user information: ${err}`);
+            }
+        };
+
+        fetchUserInfo();
+    }, []);
 
     return (
         <ParallaxScrollView
@@ -36,8 +81,8 @@ export default function UserInfoScreen() {
                     source={require("@/assets/images/profile-picture.jpeg")}
                     style={styles.avatarFrame}
                 />
-                <Text style={styles.userName}>{userData.name}</Text>
-                <Text style={styles.userEmail}>{userData.email}</Text>
+                <Text style={styles.userName}>{userInfo.name}</Text>
+                <Text style={styles.userEmail}>{userInfo.email}</Text>
             </View>
         </ParallaxScrollView>
     );

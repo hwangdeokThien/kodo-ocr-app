@@ -21,6 +21,10 @@ export default function HomeScreen() {
     const fontsLoaded = loadFonts();
     const [notesData, setNotesData] = useState<NoteProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredNotes, setFilteredNotes] = useState<NoteProps[]>([]);
+    const [sortModalVisible, setSortModalVisible] = useState(false);
+    const [sortOrder, setSortOrder] = useState("newest");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,6 +48,7 @@ export default function HomeScreen() {
 
                 const data = await response.json();
                 setNotesData(data);
+                setFilteredNotes(data);
                 // console.log(data);
             } catch (err) {
                 console.log(`Error fetching note data: ${err}`);
@@ -54,11 +59,6 @@ export default function HomeScreen() {
 
         fetchData();
     }, []);
-
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filteredNotes, setFilteredNotes] = useState<NoteProps[]>([]);
-    const [sortModalVisible, setSortModalVisible] = useState(false);
-    const [sortOrder, setSortOrder] = useState("newest");
 
     const handleSearch = (query: string) => {
         setSearchQuery(query);
@@ -81,7 +81,7 @@ export default function HomeScreen() {
         const sortedNotes = [...filteredNotes].sort((a, b) => {
             const dateA = new Date(a.accessedDate).getTime();
             const dateB = new Date(b.accessedDate).getTime();
-            return order === "newest" ? dateB - dateA : dateA - dateB;
+            return order === "oldest" ? dateB - dateA : dateA - dateB;
         });
 
         setFilteredNotes(sortedNotes);
