@@ -1,6 +1,10 @@
-# Welcome to Kodo - OCR app 👋
+# Welcome to Kodo - noting app with OCR 👋
 
-This is my personal OCR application, using react native technology, combining with expo for the app platform.
+This is my noting application for personal use, and you're welcome to use it too. 
+
+💻 Tech stack in the project:
+- React Native with Expo for frontend development.
+- ElysiaJS with Bun for backend development.
 
 ## Running backend
 
