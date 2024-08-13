@@ -113,7 +113,9 @@ export default function UserInfoScreen() {
                 <Text style={styles.userName}>{userInfo.name}</Text>
                 <Text style={styles.userBio}>{userInfo.bio}</Text>
                 <View style={styles.userInfoBox}>
-                    {Object.entries(userInfo).map(([field, value]) => (
+                {Object.entries(userInfo)
+                    .filter(([field]) => !['name', 'bio', 'avatar'].includes(field))
+                    .map(([field, value]) => (
                         <InfoItem key={field} field={field} value={value} />
                     ))}
                 </View>
@@ -146,12 +148,12 @@ const styles = StyleSheet.create({
     },
     userName: {
         fontFamily: "Dosis-Bold",
-        fontSize: 35,
+        fontSize: 38,
         alignSelf: "center",
     },
     userBio: {
         fontFamily: "Dosis-Regular",
-        fontSize: 15,
+        fontSize: 20,
         alignSelf: "center",
         color: "grey",
     },

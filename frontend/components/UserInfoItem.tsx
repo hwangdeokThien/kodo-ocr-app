@@ -32,72 +32,65 @@ const InfoItem = ({ field, value }: ItemProps) => {
         return value;
     };
 
-    console.log(field);
-
     return (
-        <TouchableOpacity onPress={handleTouch}>
-            <View style={styles.iconContainer}>
+        <TouchableOpacity onPress={handleTouch} style={styles.itemRow}>
+            <View style={styles.labelContainer}>
                 <Ionicons
                     name={iconTagForField[field]}
                     style={styles.iconStyle}
                 />
+                <Text style={styles.iconText}>{field}</Text>
             </View>
-            <View></View>
-        </TouchableOpacity>
+            <View style={styles.contentContainer}>
+                <Text style={styles.contentText}>
+                    {typeof value !== 'undefined' ? 
+                        (typeof value === 'string' ? value : value.toString()) 
+                        : 
+                        null
+                    }
+                </Text>
+            </View>
+            </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
-    cardContainer: {
+    itemRow: {
         borderWidth: 4,
-        borderRadius: 20,
-        justifyContent: "flex-start",
-        borderColor: "#0A6847",
-        shadowColor: "black",
-        shadowRadius: 2,
-        shadowOpacity: 0.1,
+        borderRadius: 4,
+        borderColor: 'transparent',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        height: 35,
     },
-    iconContainer: {
-        height: 30,
-        width: 30,
+    labelContainer: {
         backgroundColor: "transparent",
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginRight: 4,
+    },
+    contentContainer: {
+        width: 200
     },
     iconStyle: {
         fontSize: 25,
-        color: "white",
-    },
-    cardHeader: {
-        flexDirection: "row",
-        backgroundColor: "#40A578",
-        justifyContent: "space-between",
-        padding: 15,
-        alignItems: "center",
-        borderTopStartRadius: 15,
-        borderTopEndRadius: 15,
-        borderBottomColor: "#0A6847",
-        borderBottomWidth: 1,
-    },
-    cardHeaderText: {
-        marginLeft: 5,
-        fontFamily: "Dosis-Bold",
-        color: "white",
-        fontSize: 20,
-    },
-    cardContent: {
-        backgroundColor: "white",
-        padding: 15,
-        borderBottomEndRadius: 15,
-        borderBottomStartRadius: 15,
-    },
-    cardContentText: {
-        fontFamily: "Dosis-Regular",
-        fontSize: 15,
         color: "black",
+        marginRight: 3
+    },
+    iconText: {
+        fontFamily: "Dosis-Bold",
+        fontSize: 18,
+        color: "black",
+    },
+    contentText: {
+        fontFamily: "Dosis-Bold",
+        fontSize: 18,
+        color: "#0A6847",
     },
     dateFormat: {
         fontFamily: "Dosis-Regular",
         fontSize: 15,
-        color: "white",
+        color: "black",
     },
 });
 

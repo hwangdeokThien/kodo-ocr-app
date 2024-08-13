@@ -70,9 +70,18 @@ async function deleteNote(id: String) {
     }
 }
 
+async function scanPhoto(body: any) {
+    try {
+        console.log(body);
+    } catch (error) {
+        console.log(`Error scanning note: ${error}`);
+    }
+}
+
 const noteRoutes = new Elysia({ prefix: "/notes" })
     .get("/", () => getNotes())
     .get("/:id", ({ params: { id } }) => getNoteById(id))
+    .get("/scan", ({ body }) => scanPhoto(body))
     .post("/", ({ body }) => createNote(body))
     .patch("/:id", ({ params: { id }, body }) => updateNote(id, body))
     .delete("/:id", ({ params: { id } }) => deleteNote(id));

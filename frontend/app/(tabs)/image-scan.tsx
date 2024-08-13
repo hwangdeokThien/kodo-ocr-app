@@ -34,7 +34,8 @@ const screenHeight = Dimensions.get("screen").height;
 
 export default function ImageScan() {
     const [facing, setFacing] = useState(CameraType.back);
-    const [image, setImage] = useState<string | null>(null);
+    const [image, setImage] = useState<any>(null);
+    const [photoData, setPhotoData] = useState<any>(null);
     const [permission, requestPermission] = useCameraPermissions();
     const cameraRef = useRef<CameraView>(null);
 
@@ -52,7 +53,7 @@ export default function ImageScan() {
         );
 
     if (!permission) {
-        return <View />;
+        return <View/>;
     }
 
     const checkPermission = () => {
@@ -73,9 +74,11 @@ export default function ImageScan() {
                 try {
                     const picture: CameraCapturedPicture | undefined =
                         await cameraRef.current.takePictureAsync(options);
+                    setPhotoData(picture?.base64);
+
                     if (picture) {
-                        console.log(picture.uri);
-                        setImage(picture.uri);
+                        console.log('picture', picture);
+                        setImage(picture);
                     }
                 } catch (error) {
                     console.error("Error taking picture:", error);
@@ -90,12 +93,13 @@ export default function ImageScan() {
             allowsEditing: true,
             aspect: [screenWidth * 0.85, screenHeight * 0.5],
             quality: 1,
+            base64: true,
         });
 
-        console.log(result);
-
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
+            const image = result.assets[0];
+            setPhotoData(image.base64);
+            setImage(image);
         }
     };
 
@@ -103,9 +107,30 @@ export default function ImageScan() {
         setImage(null);
     };
 
-    const handleVerifyImage = () => {
-        console.log("user verify the image");
+    const handleVerifyImage = async () => {    
+        const formData = new FormData();
+        formData.append('scanPhoto', photoData, image.fileName || 'image.jpeg');
+    
+        try {
+            const uploadResponse = await fetch("http://localhost:3009/notes/scan", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+    
+            if (uploadResponse.ok) {
+                const result = await uploadResponse.json();
+                console.log("Upload success:", result);
+            } else {
+                console.error("Upload failed:", uploadResponse.statusText);
+            }
+        } catch (error) {
+            console.error("Error during upload:", error);
+        }
     };
+    
 
     const toggleCameraFacing = () => {
         setFacing((current) =>
@@ -192,7 +217,7 @@ export default function ImageScan() {
                 <View style={styles.cameraContainer}>
                     {image ? (
                         <Image
-                            source={{ uri: image }}
+                            source={{ uri: image.uri }}
                             style={styles.imageShow}
                         />
                     ) : permission.granted ? (
@@ -248,7 +273,7 @@ export default function ImageScan() {
                         >
                             <FontAwesomeIcon
                                 icon={faCircleCheck}
-                                size={60}
+                                size={70}
                                 color="#40A578"
                             />
                         </TouchableOpacity>
@@ -262,7 +287,7 @@ export default function ImageScan() {
                         >
                             <FontAwesomeIcon
                                 icon={faCircle}
-                                size={60}
+                                size={70}
                                 color="#40A578"
                             />
                         </TouchableOpacity>
