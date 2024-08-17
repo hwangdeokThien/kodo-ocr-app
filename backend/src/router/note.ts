@@ -1,5 +1,20 @@
-import { Elysia, NotFoundError } from "elysia";
+import { Elysia, NotFoundError, t } from "elysia";
 import Note from "../model/Note";
+import { PutObjectCommand, S3Client, S3ClientConfig } from "@aws-sdk/client-s3";
+import fs from 'fs';
+
+const bucketName = process.env.BUCKET_NAME
+const bucketRegion = process.env.BUCKET_REGION
+const accessKey = process.env.S3_ACCESS_KEY
+const secretAccessKey = process.env.SECRET_S3_ACCESS_KEY
+
+const s3 = new S3Client({
+    credentials: {
+        secretAccessKey: secretAccessKey,
+        accessKeyId: accessKey
+    },
+    region: bucketRegion
+} as S3ClientConfig)
 
 async function getNotes() {
     try {
@@ -72,7 +87,18 @@ async function deleteNote(id: String) {
 
 async function scanPhoto(body: any) {
     try {
-        console.log(body);
+        const params = {
+            Bucket: bucketName,
+            Key: body.fileName,
+            Body: body.photo,
+            Content: body.mimeType
+            
+        }
+
+        const command = new PutObjectCommand(params);
+        const response = await s3.send(command);
+        console.log(response);
+
     } catch (error) {
         console.log(`Error scanning note: ${error}`);
     }
@@ -81,7 +107,7 @@ async function scanPhoto(body: any) {
 const noteRoutes = new Elysia({ prefix: "/notes" })
     .get("/", () => getNotes())
     .get("/:id", ({ params: { id } }) => getNoteById(id))
-    .get("/scan", ({ body }) => scanPhoto(body))
+    .post("/scan", ({ body }) => scanPhoto(body), { type: 'multipart/form-data' })
     .post("/", ({ body }) => createNote(body))
     .patch("/:id", ({ params: { id }, body }) => updateNote(id, body))
     .delete("/:id", ({ params: { id } }) => deleteNote(id));

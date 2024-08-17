@@ -74,11 +74,12 @@ export default function ImageScan() {
                 try {
                     const picture: CameraCapturedPicture | undefined =
                         await cameraRef.current.takePictureAsync(options);
-                    setPhotoData(picture?.base64);
 
                     if (picture) {
-                        console.log('picture', picture);
+                        setPhotoData(picture.base64);
                         setImage(picture);
+                    } else {
+                        console.log('Photo taken unsuccessfully!')
                     }
                 } catch (error) {
                     console.error("Error taking picture:", error);
@@ -107,22 +108,25 @@ export default function ImageScan() {
         setImage(null);
     };
 
-    const handleVerifyImage = async () => {    
-        const formData = new FormData();
-        formData.append('scanPhoto', photoData, image.fileName || 'image.jpeg');
+    const handleVerifyImage = async () => {
+        const dataForm = new FormData();
+        const fileName = `public/${Date.now()}.jpg`;
+        dataForm.append('photo', photoData);
+        dataForm.append('uri', image.uri);
+        dataForm.append('fileSize', image.fileSize);
+        dataForm.append('fileName', fileName);
+        dataForm.append('mimeType', image.mimeType);
+        dataForm.append('height', image.height);
+        dataForm.append('width', image.width);
     
         try {
-            const uploadResponse = await fetch("http://localhost:3009/notes/scan", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+            const uploadResponse = await fetch("http://localhost:3009/api/notes/scan", {
+                method: "POST",
+                body: dataForm
             });
     
             if (uploadResponse.ok) {
-                const result = await uploadResponse.json();
-                console.log("Upload success:", result);
+                console.log("Upload success!");
             } else {
                 console.error("Upload failed:", uploadResponse.statusText);
             }
