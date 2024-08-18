@@ -75,12 +75,12 @@ const styles = StyleSheet.create({
     iconStyle: {
         fontSize: 25,
         color: "black",
-        marginRight: 3
+        marginRight: 5,
     },
     iconText: {
         fontFamily: "Dosis-Bold",
         fontSize: 18,
-        color: "black",
+        color: "grey",
     },
     contentText: {
         fontFamily: "Dosis-Bold",

@@ -28,6 +28,7 @@ import {
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from 'expo-file-system';
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -35,7 +36,6 @@ const screenHeight = Dimensions.get("screen").height;
 export default function ImageScan() {
     const [facing, setFacing] = useState(CameraType.back);
     const [image, setImage] = useState<any>(null);
-    const [photoData, setPhotoData] = useState<any>(null);
     const [permission, requestPermission] = useCameraPermissions();
     const cameraRef = useRef<CameraView>(null);
 
@@ -76,7 +76,6 @@ export default function ImageScan() {
                         await cameraRef.current.takePictureAsync(options);
 
                     if (picture) {
-                        setPhotoData(picture.base64);
                         setImage(picture);
                     } else {
                         console.log('Photo taken unsuccessfully!')
@@ -93,13 +92,11 @@ export default function ImageScan() {
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             aspect: [screenWidth * 0.85, screenHeight * 0.5],
-            quality: 1,
-            base64: true,
+            quality: 1
         });
 
         if (!result.canceled) {
             const image = result.assets[0];
-            setPhotoData(image.base64);
             setImage(image);
         }
     };
@@ -108,28 +105,22 @@ export default function ImageScan() {
         setImage(null);
     };
 
-    const handleVerifyImage = async () => {
-        const dataForm = new FormData();
-        const fileName = `public/${Date.now()}.jpg`;
-        dataForm.append('photo', photoData);
-        dataForm.append('uri', image.uri);
-        dataForm.append('fileSize', image.fileSize);
-        dataForm.append('fileName', fileName);
-        dataForm.append('mimeType', image.mimeType);
-        dataForm.append('height', image.height);
-        dataForm.append('width', image.width);
-    
+    const handleVerifyImage = async () => {    
         try {
-            const uploadResponse = await fetch("http://localhost:3009/api/notes/scan", {
-                method: "POST",
-                body: dataForm
+            const uploadResponse = await FileSystem.uploadAsync("http://localhost:3009/api/notes/scan", image.uri, {
+                fieldName: 'photo',
+                httpMethod: 'POST',
+                uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+                mimeType: image.mimeType
             });
-    
-            if (uploadResponse.ok) {
-                console.log("Upload success!");
+
+            // console.log(uploadResponse)
+
+            if (uploadResponse.status === 200) {
+                console.log('Upload success!');
             } else {
-                console.error("Upload failed:", uploadResponse.statusText);
-            }
+                console.error('Upload failed!')
+            }        
         } catch (error) {
             console.error("Error during upload:", error);
         }

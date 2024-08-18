@@ -87,10 +87,14 @@ async function deleteNote(id: String) {
 
 async function scanPhoto(body: any) {
     try {
+        const arrayBuffer = await body.photo.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        const fileName = `public/${Date.now()}.jpg`;
         const params = {
             Bucket: bucketName,
-            Key: body.fileName,
-            Body: body.photo,
+            Key: fileName,
+            Body: buffer,
             Content: body.mimeType
             
         }
@@ -99,6 +103,8 @@ async function scanPhoto(body: any) {
         const response = await s3.send(command);
         console.log(response);
 
+        const url = `https://${bucketName}.s3.amazonaws.com/${fileName}`
+        return url;
     } catch (error) {
         console.log(`Error scanning note: ${error}`);
     }
