@@ -107,14 +107,12 @@ export default function ImageScan() {
 
     const handleVerifyImage = async () => {    
         try {
-            const uploadResponse = await FileSystem.uploadAsync("http://localhost:3009/api/notes/scan", image.uri, {
+            const uploadResponse = await FileSystem.uploadAsync("http://localhost:3009/api/photos/scan", image.uri, {
                 fieldName: 'photo',
                 httpMethod: 'POST',
                 uploadType: FileSystem.FileSystemUploadType.MULTIPART,
                 mimeType: image.mimeType
             });
-
-            // console.log(uploadResponse)
 
             if (uploadResponse.status === 200) {
                 console.log('Upload success!');
