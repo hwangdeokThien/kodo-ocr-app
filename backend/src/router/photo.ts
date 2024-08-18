@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
 import Note from "../model/Note";
-import { PutObjectCommand, S3Client, S3ClientConfig, GetObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client, S3ClientConfig, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const bucketName = process.env.BUCKET_NAME
@@ -41,7 +41,7 @@ async function scanPhoto(body: any) {
     }
 }
 
-async function getPhoto(id: String, body: any) {
+async function getPhoto(id: string, body: any) {
     const getObjectParams = {
         Bucket: bucketName,
         Key: body.fileName
@@ -50,11 +50,21 @@ async function getPhoto(id: String, body: any) {
     const command = new GetObjectCommand(getObjectParams);
     const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
+    // handle update on database
+
     return url;
 }
 
-async function deletePhoto(id: String) {
+async function deletePhoto(id: string) {
+    const deleteObjectParams = {
+        Bucket: bucketName, 
+        Key: id
+    }
 
+    const command = new DeleteObjectCommand(deleteObjectParams);
+    const response = await s3.send(command)
+
+    // handle delete on database
 }
 
 const noteRoutes = new Elysia({ prefix: "/photos" })
