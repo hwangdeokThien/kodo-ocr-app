@@ -1,5 +1,4 @@
 import { Elysia } from "elysia";
-import Note from "../model/Note";
 import { PutObjectCommand, S3Client, S3ClientConfig, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -27,7 +26,6 @@ async function scanPhoto(body: any) {
             Key: fileName,
             Body: buffer,
             Content: body.mimeType
-            
         }
 
         const command = new PutObjectCommand(putObjectParams);
@@ -67,9 +65,9 @@ async function deletePhoto(id: string) {
     // handle delete on database
 }
 
-const noteRoutes = new Elysia({ prefix: "/photos" })
+const photoRoutes = new Elysia({ prefix: "/photos" })
     .get("/:id", ({params: {id}, body}) => getPhoto(id, body))
     .post("/scan", ({ body }) => scanPhoto(body), { type: 'multipart/form-data' })
     .delete("/:id", ({ params: { id } }) => deletePhoto(id));
 
-export default noteRoutes;
+export default photoRoutes;
