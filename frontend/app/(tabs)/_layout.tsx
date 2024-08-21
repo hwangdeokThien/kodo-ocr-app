@@ -1,8 +1,8 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Tabs } from "expo-router";
+import React from "react";
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -10,46 +10,56 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#FEFDED'
-        }
-      }}>
+          backgroundColor: "#FEFDED",
+        },
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name="(home)"
         options={{
-          title: 'Home',
+          title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+            <TabBarIcon
+              name={focused ? "home" : "home-outline"}
+              color={color}
+            />
           ),
           tabBarLabelStyle: {
-            fontFamily: 'Dosis-ExtraBold',
-          }
+            fontFamily: "Dosis-ExtraBold",
+          },
         }}
       />
       <Tabs.Screen
-        name="image-scan"
+        name="(imageScan)"
         options={{
-          title: 'OCR',
+          title: "OCR",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'camera' : 'camera-outline'} color={color} />
+            <TabBarIcon
+              name={focused ? "camera" : "camera-outline"}
+              color={color}
+            />
           ),
           tabBarLabelStyle: {
-            fontFamily: 'Dosis-ExtraBold'
-          }
+            fontFamily: "Dosis-ExtraBold",
+          },
         }}
       />
       <Tabs.Screen
-        name="user-info"
+        name="(userInfo)"
         options={{
-          title: 'Me', 
+          title: "Me",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'person-circle' : 'person-circle-outline'} color={color} />
+            <TabBarIcon
+              name={focused ? "person-circle" : "person-circle-outline"}
+              color={color}
+            />
           ),
           tabBarLabelStyle: {
-            fontFamily: 'Dosis-ExtraBold'
-          }
+            fontFamily: "Dosis-ExtraBold",
+          },
         }}
       />
     </Tabs>

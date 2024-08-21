@@ -5,7 +5,6 @@ import { StyleSheet, Image } from "react-native";
 import { loadFonts } from "@/components/Fonts";
 import InfoItem from "@/components/UserInfoItem";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { URL_ANDROID, URL_IOS } from "@env";
 
 type UserInfoProps = {
   username: string;
@@ -35,10 +34,14 @@ const staticData: UserInfoProps = {
 export default function UserInfoScreen() {
   const fontsLoaded = loadFonts();
   const [userInfo, setUserInfo] = useState<UserInfoProps>(staticData);
-  const URL = Platform.OS === "ios" ? URL_IOS : URL_ANDROID;
+  const URL =
+    Platform.OS === "ios"
+      ? process.env.EXPO_PUBLIC_URL_IOS
+      : process.env.EXPO_PUBLIC_URL_ANDROID;
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
+        console.log(URL);
         const response = await fetch(`${URL}/api/users/${id}`, {
           method: "GET",
           headers: {

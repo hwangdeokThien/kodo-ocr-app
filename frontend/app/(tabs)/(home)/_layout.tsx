@@ -15,7 +15,6 @@ import Note from "@/components/Note";
 import { Ionicons } from "@expo/vector-icons";
 import { loadFonts } from "@/components/Fonts";
 import { NoteProps } from "@/components/Note";
-import { URL_IOS, URL_ANDROID } from "@env";
 
 const screenWidth = Dimensions.get("screen").width;
 export default function HomeScreen() {
@@ -26,11 +25,15 @@ export default function HomeScreen() {
   const [filteredNotes, setFilteredNotes] = useState<NoteProps[]>([]);
   const [sortModalVisible, setSortModalVisible] = useState(false);
   const [sortOrder, setSortOrder] = useState("newest");
-  const URL = Platform.OS === "ios" ? URL_IOS : URL_ANDROID;
+  const URL =
+    Platform.OS === "ios"
+      ? process.env.EXPO_PUBLIC_URL_IOS
+      : process.env.EXPO_PUBLIC_URL_ANDROID;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log(URL);
         const response = await fetch(`${URL}/api/notes/`, {
           method: "GET",
           headers: {
@@ -93,6 +96,7 @@ export default function HomeScreen() {
           style={{}}
         />
       }
+      headerHeight={100}
     >
       <Text style={styles.homeText}> Your Note</Text>
 
