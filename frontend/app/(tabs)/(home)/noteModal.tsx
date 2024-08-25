@@ -83,7 +83,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
             multiline
           />
           <Text style={styles.creationDate}>
-            {dateTime} | {charCount}{" "}
+            {dateTime}  |  {charCount}{" "}
             {charCount > 2 ? "characters" : "character"}
           </Text>
           <TextInput
@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
   },
   backArrowText: {
     fontSize: 24,
+    fontFamily: 'Dosis-Bold'
   },
   modalTitle: {
     fontSize: 20,
@@ -130,17 +131,20 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     borderRadius: 5,
+    fontFamily: 'Dosis-Bold'
   },
   inputContent: {
     fontSize: 16,
     padding: 10,
     marginBottom: 20,
     borderRadius: 5,
+    fontFamily: 'Dosis-Medium'
   },
   creationDate: {
     marginHorizontal: 10,
     marginBottom: 20,
     color: "#888",
+    fontFamily: 'Dosis-Medium'
   },
   saveButton: {
     backgroundColor: "#007BFF",
