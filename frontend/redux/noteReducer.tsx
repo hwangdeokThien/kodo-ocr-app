@@ -1,31 +1,29 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { set } from "date-fns";
 
 interface Note {
-  id: number;
+  id: number | undefined;
   title: string;
   content: string;
-  createdDate: string;
-  updatedDate: string;
+  createdDate: Date;
+  modifiedDate: Date;
 }
 
 interface Notes {
   notes: Note[];
-  filteredNotes: Note[];
-  searchQuery: string;
-  sortOrder: string;
 }
 
 const initialState: Notes = {
   notes: [],
-  filteredNotes: [],
-  searchQuery: "",
-  sortOrder: "newest",
 };
 
 const notesSlice = createSlice({
   name: "notes",
   initialState,
   reducers: {
+    setNotes: (state: Notes, action: PayloadAction<Note[]>) => {
+      state.notes = action.payload;
+    },
     pushNote: (state: Notes, action: PayloadAction<Note>) => {
       state.notes.push(action.payload);
     },
@@ -41,6 +39,7 @@ const notesSlice = createSlice({
   },
 });
 
-export const {} = notesSlice.actions;
+export const { setNotes, pushNote, deleteNote, updateNote } =
+  notesSlice.actions;
 
 export default notesSlice.reducer;
