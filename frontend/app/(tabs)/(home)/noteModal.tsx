@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+    marginTop: 100,
   },
   modalContent: {
     width: "100%",
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     fontWeight: "bold",
-  },
+  }
 });
 
 export default AddNoteModal;

@@ -18,6 +18,7 @@ type UserInfoProps = {
 };
 
 const screenWidth = Dimensions.get("screen").width;
+const screenHeight = Dimensions.get("screen").height;
 
 const id = "666af03498a1b21ae5b96fb5";
 const staticData: UserInfoProps = {
@@ -93,6 +94,7 @@ export default function UserInfoScreen() {
           style={styles.headerImage}
         />
       }
+      headerHeight={screenHeight * 0.25}
     >
       <View>
         {userInfo.avatar ? (

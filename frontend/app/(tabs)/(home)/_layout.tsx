@@ -22,6 +22,7 @@ import { pushNote, setNotes } from "@/redux/noteReducer";
 import { RootState } from "@/redux/store";
 
 const screenWidth = Dimensions.get("screen").width;
+const screenHeight = Dimensions.get("screen").height;
 export default function HomeScreen() {
   const fontsLoaded = loadFonts();
   const [notesData, setNotesData] = useState<NoteProps[]>([]);
@@ -147,7 +148,7 @@ export default function HomeScreen() {
             style={{}}
           />
         }
-        headerHeight={100}
+        headerHeight={screenHeight * 0.25}
       >
         <Text style={styles.homeText}> Your Note</Text>
 

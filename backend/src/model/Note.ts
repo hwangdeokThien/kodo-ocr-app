@@ -1,15 +1,19 @@
 import { Schema, model } from "mongoose";
 
 interface INote {
+    id: string;
     title: string;
     content: string;
-    accessedDate: Date;
+    createdDate: string;
+    modifiedDate: string;
 }
 
 const userSchema = new Schema<INote>({
+    id: {type: String, required: true },
     title: { type: String, required: true },
     content: { type: String, required: true },
-    accessedDate: { type: Date, default: Date.now },
+    createdDate: { type: String, default: new Date().toLocaleDateString() },
+    modifiedDate: { type: String, default: new Date().toLocaleDateString() },
 });
 
 const Note = model("Note", userSchema);
