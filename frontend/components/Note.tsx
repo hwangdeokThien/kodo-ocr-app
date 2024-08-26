@@ -19,7 +19,7 @@ const Note = ({ id, title, content, createdDate, modifiedDate }: NoteProps) => {
     day: "numeric",
   });
   return (
-    <TouchableOpacity style={styles.cardContainer}>
+    <View style={styles.cardContainer}>
       <View style={styles.cardHeader}>
         <View style={{ flexDirection: "row" }}>
           <Ionicons name="newspaper" style={styles.iconHeader} />
@@ -32,7 +32,7 @@ const Note = ({ id, title, content, createdDate, modifiedDate }: NoteProps) => {
           {content}
         </Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 

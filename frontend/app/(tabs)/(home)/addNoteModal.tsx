@@ -43,6 +43,10 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
 
   const handleSaveNote = () => {
     // Logic to save the note
+    if (!noteTitle) {
+      onClose();
+      return;
+    }
     onSave(noteTitle, noteContent, new Date(), new Date());
     onClose();
   };
@@ -83,7 +87,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
             multiline
           />
           <Text style={styles.creationDate}>
-            {dateTime}  |  {charCount}{" "}
+            {dateTime} | {charCount}{" "}
             {charCount > 2 ? "characters" : "character"}
           </Text>
           <TextInput
@@ -105,7 +109,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    marginTop: 100,
   },
   modalContent: {
     width: "100%",
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
   },
   backArrowText: {
     fontSize: 24,
-    fontFamily: 'Dosis-Bold'
+    fontFamily: "Dosis-Bold",
   },
   modalTitle: {
     fontSize: 20,
@@ -131,20 +134,20 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     borderRadius: 5,
-    fontFamily: 'Dosis-Bold'
+    fontFamily: "Dosis-Bold",
   },
   inputContent: {
     fontSize: 16,
     padding: 10,
     marginBottom: 20,
     borderRadius: 5,
-    fontFamily: 'Dosis-Medium'
+    fontFamily: "Dosis-Medium",
   },
   creationDate: {
     marginHorizontal: 10,
     marginBottom: 20,
     color: "#888",
-    fontFamily: 'Dosis-Medium'
+    fontFamily: "Dosis-Medium",
   },
   saveButton: {
     backgroundColor: "#007BFF",
@@ -155,7 +158,7 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     fontWeight: "bold",
-  }
+  },
 });
 
 export default AddNoteModal;

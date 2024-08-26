@@ -13,6 +13,7 @@ import { PaperProvider } from "react-native-paper";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { store } from "@/redux/store";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -35,10 +36,12 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Provider store={store}>
         <PaperProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
+          <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </SafeAreaView>
         </PaperProvider>
       </Provider>
     </ThemeProvider>

@@ -15,15 +15,20 @@ import Note from "@/components/Note";
 import { Ionicons } from "@expo/vector-icons";
 import { loadFonts } from "@/components/Fonts";
 import { NoteProps } from "@/components/Note";
-import AddNoteModal from "./noteModal";
+import AddNoteModal from "./addNoteModal";
 import { useDispatch, useSelector } from "react-redux";
 import * as SQLite from "expo-sqlite/legacy";
 import { pushNote, setNotes } from "@/redux/noteReducer";
 import { RootState } from "@/redux/store";
+import EditNoteModal from "./editNoteModal";
+import { Menu } from "react-native-paper";
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
 export default function HomeScreen() {
+  interface VisibleMenus {
+    [key: number]: boolean;
+  }
   const fontsLoaded = loadFonts();
   const [notesData, setNotesData] = useState<NoteProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,11 +37,33 @@ export default function HomeScreen() {
   const [sortModalVisible, setSortModalVisible] = useState(false);
   const [sortOrder, setSortOrder] = useState("newest");
   const [addNoteModalVisible, setAddNoteModalVisible] = useState(false);
+  const [editNoteModalVisible, setEditNoteModalVisible] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<NoteProps | null>(null);
+  const [visibleMenus, setVisibleMenus] = useState<VisibleMenus>({});
+
+  const [anchor, setAnchor] = useState({ x: 0, y: 0 });
   const notes = useSelector((state: RootState) => state.note.notes);
 
   const dispatch = useDispatch();
 
   const db = SQLite.openDatabase("notes.db");
+
+  const openMenu = (noteId: any) => {
+    setVisibleMenus((prev) => ({ ...prev, [noteId]: true }));
+  };
+
+  const handleOnLongPress = (event: any, noteId: number | undefined) => {
+    const anchorEvent = {
+      x: event.nativeEvent.pageX,
+      y: event.nativeEvent.pageY,
+    };
+    setAnchor(anchorEvent);
+    openMenu(noteId);
+  };
+
+  const closeMenu = (noteId: any) => {
+    setVisibleMenus((prev) => ({ ...prev, [noteId]: false }));
+  };
 
   const handleSaveNote = (
     title: string,
@@ -44,7 +71,7 @@ export default function HomeScreen() {
     createdDate: Date,
     modifiedDate: Date
   ) => {
-    console.log(createdDate, modifiedDate);
+    console.log("Saving note:", title, content, createdDate, modifiedDate);
     db.transaction((tx) => {
       tx.executeSql(
         "INSERT INTO notes (title, content, createdDate, modifiedDate) VALUES (?, ?, ?, ?)",
@@ -71,9 +98,74 @@ export default function HomeScreen() {
               modifiedDate,
             },
           ]);
+          console.log("Notes data:", notesData);
         },
         (tx, error) => {
           console.log("Error inserting note:", error);
+          return true;
+        }
+      );
+    });
+  };
+
+  const handleUpdateNote = (
+    id: number | undefined,
+    title: string,
+    content: string,
+    modifiedDate: Date
+  ) => {
+    if (id === undefined) {
+      console.error("ID is undefined. Cannot update note.");
+      return;
+    }
+    if (!title) {
+      console.error("Title cannot be empty. Cannot update note.");
+      return;
+    }
+    db.transaction((tx) => {
+      tx.executeSql(
+        "UPDATE notes SET title = ?, content = ?, modifiedDate = ? WHERE id = ?",
+        [title, content, modifiedDate.toISOString(), id],
+        () => {
+          console.log("Note updated with ID:", id); // Log the insertId
+          const updatedNotes = notesData.map((note) => {
+            if (note.id === id) {
+              return {
+                ...note,
+                title,
+                content,
+                modifiedDate,
+              };
+            }
+            return note;
+          });
+          setNotesData(updatedNotes);
+          setFilteredNotes(updatedNotes);
+        },
+        (tx, error) => {
+          console.log("Error updating note:", error);
+          return true;
+        }
+      );
+    });
+  };
+  const handleDeleteNote = (id: number | undefined) => {
+    if (id === undefined) {
+      console.error("ID is undefined. Cannot delete note.");
+      return;
+    }
+    db.transaction((tx) => {
+      tx.executeSql(
+        "DELETE FROM notes WHERE id = ?",
+        [id],
+        () => {
+          console.log("Note deleted with ID:", id);
+          const updatedNotes = notesData.filter((note) => note.id !== id);
+          setNotesData(updatedNotes);
+          setFilteredNotes(updatedNotes);
+        },
+        (tx, error) => {
+          console.log("Error deleting note:", error);
           return true;
         }
       );
@@ -138,6 +230,12 @@ export default function HomeScreen() {
     setFilteredNotes(sortedNotes);
   };
 
+  const handleNotePress = (note: NoteProps) => {
+    console.log("Note pressed:", note);
+    setSelectedNote(note);
+    setEditNoteModalVisible(true);
+  };
+
   return (
     <View style={styles.container}>
       <ParallaxScrollView
@@ -150,7 +248,27 @@ export default function HomeScreen() {
         }
         headerHeight={screenHeight * 0.25}
       >
-        <Text style={styles.homeText}> Your Note</Text>
+        <View
+          style={{
+            marginTop: -10,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            marginHorizontal: -5,
+          }}
+        >
+          <Text style={styles.homeText}> Your Note</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setAddNoteModalVisible(true);
+            }}
+          >
+            <Ionicons
+              name="create-outline"
+              style={{ fontSize: 36, color: "#4F6F52" }}
+            />
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.searchAndFilter}>
           <View style={styles.searchBox}>
@@ -173,14 +291,32 @@ export default function HomeScreen() {
 
         <View style={styles.homeBody}>
           {filteredNotes.map((note, index) => (
-            <Note
+            <TouchableOpacity
               key={index}
-              id={note.id}
-              title={note.title}
-              content={note.content}
-              createdDate={note.createdDate}
-              modifiedDate={note.modifiedDate}
-            />
+              onPress={() => handleNotePress(note)}
+              onLongPress={(event) => handleOnLongPress(event, note.id)}
+            >
+              <Menu
+                visible={
+                  note.id !== undefined ? visibleMenus[note.id] || false : false
+                }
+                onDismiss={() => closeMenu(note.id)}
+                anchor={anchor}
+              >
+                <Menu.Item
+                  onPress={() => handleDeleteNote(note.id)}
+                  title="Delete"
+                  leadingIcon="delete"
+                />
+              </Menu>
+              <Note
+                id={note.id}
+                title={note.title}
+                content={note.content}
+                createdDate={note.createdDate}
+                modifiedDate={note.modifiedDate}
+              />
+            </TouchableOpacity>
           ))}
         </View>
       </ParallaxScrollView>
@@ -218,19 +354,15 @@ export default function HomeScreen() {
         onClose={() => setAddNoteModalVisible(false)}
         onSave={handleSaveNote}
       />
-      <View>
-        <TouchableOpacity
-          style={styles.addNoteButton}
-          onPress={() => {
-            setAddNoteModalVisible(true);
-          }}
-        >
-          <Ionicons
-            name="add"
-            style={{ color: "white", fontSize: 24, fontWeight: "bold" }}
-          />
-        </TouchableOpacity>
-      </View>
+
+      {selectedNote ? (
+        <EditNoteModal
+          isVisible={editNoteModalVisible}
+          note={selectedNote}
+          onClose={() => setEditNoteModalVisible(false)}
+          onSave={handleUpdateNote}
+        />
+      ) : null}
     </View>
   );
 }
