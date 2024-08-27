@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface AddNoteModalProps {
   isVisible: boolean;
@@ -62,8 +63,9 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
       visible={isVisible}
       animationType="fade"
       onRequestClose={onClose}
+      style={styles.modalContainer}
     >
-      <View style={styles.modalContainer}>
+      <SafeAreaView style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <View
             style={{ justifyContent: "space-between", flexDirection: "row" }}
@@ -98,7 +100,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
             multiline
           />
         </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 };
