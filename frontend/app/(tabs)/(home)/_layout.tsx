@@ -22,6 +22,7 @@ import { pushNote, setNotes } from "@/redux/noteReducer";
 import { RootState } from "@/redux/store";
 import EditNoteModal from "./editNoteModal";
 import { Menu } from "react-native-paper";
+import axios from "axios";
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -40,7 +41,10 @@ export default function HomeScreen() {
   const [editNoteModalVisible, setEditNoteModalVisible] = useState(false);
   const [selectedNote, setSelectedNote] = useState<NoteProps | null>(null);
   const [visibleMenus, setVisibleMenus] = useState<VisibleMenus>({});
-
+  const URL =
+    Platform.OS === "ios"
+      ? process.env.EXPO_PUBLIC_URL_IOS
+      : process.env.EXPO_PUBLIC_URL_ANDROID;
   const [anchor, setAnchor] = useState({ x: 0, y: 0 });
   const notes = useSelector((state: RootState) => state.note.notes);
 
@@ -99,6 +103,7 @@ export default function HomeScreen() {
             },
           ]);
           console.log("Notes data:", notesData);
+          saveNote(insertId, title, content, createdDate, modifiedDate);
         },
         (tx, error) => {
           console.log("Error inserting note:", error);
@@ -148,7 +153,9 @@ export default function HomeScreen() {
         }
       );
     });
+    updateNote(id, title, content, modifiedDate);
   };
+
   const handleDeleteNote = (id: number | undefined) => {
     if (id === undefined) {
       console.error("ID is undefined. Cannot delete note.");
@@ -170,6 +177,67 @@ export default function HomeScreen() {
         }
       );
     });
+    deleteNote(id);
+  };
+
+  const saveNote = async (
+    id: number | undefined,
+    title: string,
+    content: string,
+    createdDate: Date,
+    modifiedDate: Date
+  ) => {
+    try {
+      const formData = new FormData();
+      formData.append("id", id?.toString() || "");
+      formData.append("title", title);
+      formData.append("content", content);
+      formData.append("createdDate", createdDate.toISOString());
+      formData.append("modifiedDate", modifiedDate.toISOString());
+
+      const response = await axios.post(`${URL}/api/notes`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Note saved successfully:", response);
+    } catch (error) {
+      console.error("Error saving note:", error);
+    }
+  };
+
+  const deleteNote = async (id: number | undefined) => {
+    if (id === undefined) return;
+
+    try {
+      await axios.delete(`${URL}/api/notes/${id}`);
+      console.log("Note deleted successfully:", id);
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
+  };
+
+  const updateNote = async (
+    id: number | undefined,
+    title: string,
+    content: string,
+    modifiedDate: Date
+  ) => {
+    if (id === undefined) return;
+
+    try {
+      const response = await axios.patch(`${URL}/api/notes/${id}`, {
+        title,
+        content,
+        modifiedDate: modifiedDate.toISOString(),
+      });
+
+      const updatedNote = response;
+      console.log("Note updated successfully:", updatedNote);
+    } catch (error) {
+      console.error("Error updating note:", error);
+    }
   };
 
   useEffect(() => {
