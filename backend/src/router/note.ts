@@ -40,14 +40,14 @@ async function createNote(body: any) {
 
 async function updateNote(id: String, body: any) {
     try {
-        const note = await Note.findById(id);
+        const note = await Note.findOne({id: id});
 
         if (!note) {
             throw new NotFoundError("Note not found!");
         }
 
         console.log(`Sucessfully updating note ${id}`);
-        const updatedNote = await Note.findByIdAndUpdate(id, body);
+        const updatedNote = await Note.findOneAndUpdate({id: id}, body);
 
         return updatedNote;
     } catch (error) {
@@ -57,14 +57,14 @@ async function updateNote(id: String, body: any) {
 
 async function deleteNote(id: String) {
     try {
-        const note = await Note.findById(id);
+        const note = await Note.findOne({id: id});
 
         if (!note) {
             throw new NotFoundError("Note not found!");
         }
 
+        await Note.findOneAndDelete({id: id});
         console.log(`Sucessfully deleting note ${id}`);
-        await Note.findByIdAndDelete(id);
     } catch (error) {
         console.log(`Error deleting note: ${error}`);
     }
