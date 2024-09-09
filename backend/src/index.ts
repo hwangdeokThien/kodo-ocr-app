@@ -1,8 +1,8 @@
 import { Elysia } from "elysia";
 import noteRoutes from "./router/note";
 import userRoutes from "./router/user";
-import connectDB from "./data/connectDB";
 import photoRoutes from "./router/photo";
+import connectDB from "./data/connectDB";
 
 connectDB();
 
