@@ -10,7 +10,7 @@ class OCRModel:
         self.text_det = PaddleOCR(
             ir_optim=True,
             lang='german',
-            det_model_dir='./paddleocr_det',
+            det_model_dir='./paddleocr',
             rec=False,
             use_angle_cls=False
         )
@@ -18,7 +18,7 @@ class OCRModel:
         # Load VietOCR model weights
         config = Cfg.load_config_from_name('vgg_transformer')
         config['device'] = 'cpu'
-        config['weights'] = './vietocr_weights/vgg_transformer.pth'
+        config['weights'] = './vietocr/vgg_transformer.pth'
         config['cnn']['pretrained'] = False
         config['predictor']['beamsearch'] = False
         self.text_pred = Predictor(config)
