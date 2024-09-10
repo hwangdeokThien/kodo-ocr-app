@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCR Application</title>
+</head>
+
+<body style="background: #ffffff;">
+  <div class="login">
+    <h1 style="color:rgb(29, 66, 167);">OCR Scan</h1>
+
+    <form action="{{ url_for('scan') }}" method="post">
+        <button type="submit" class="btn btn-primary btn-block btn-large">Scan Text</button>
+    </form>
+
+    <br><br>
+
+    {% if recognized_text %}
+      <h4 style="color:rgb(29, 66, 167);">Recognized Text:</h4>
+      <ul>
+        {% for text in recognized_text %}
+          <li>{{ text }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <h4 style="color:rgb(29, 66, 167);">No recognized text available yet.</h4>
+    {% endif %}
+  </div>
+</body>
+</html>
