@@ -1,5 +1,5 @@
-ocr/app/paddleocr_det filter=lfs diff=lfs merge=lfs -text
-ocr/app/vietocr_weights filter=lfs diff=lfs merge=lfs -text
+ocr/app/paddleocr filter=lfs diff=lfs merge=lfs -text
+ocr/app/vietocr filter=lfs diff=lfs merge=lfs -text
 ocr/app/vietocr/* filter=lfs diff=lfs merge=lfs -text
 ocr/app/paddleocr/* filter=lfs diff=lfs merge=lfs -text
 ocr/app/paddleocr/inference.pdiparams filter=lfs diff=lfs merge=lfs -text
