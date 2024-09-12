@@ -2,7 +2,7 @@ from typing import Sequence
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.messages.base import BaseMessage
-from database import get_chat_history_collection
+from .database import get_chat_history_collection
 
 class ChatMessageHistory(BaseChatMessageHistory):
     def __init__(self, session_id: str, prompt_type: str):

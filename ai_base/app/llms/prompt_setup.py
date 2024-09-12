@@ -2,9 +2,8 @@ from operator import itemgetter
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import trim_messages
 from langchain_core.runnables import RunnablePassthrough
-from langchain_core.messages import HumanMessage, AIMessage
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from env_setup import model
+from langchain_core.messages import HumanMessage
+from .env_setup import model
 
 prompts = {
     "general_assistant": ChatPromptTemplate.from_messages(
@@ -77,30 +76,29 @@ def create_chain(prompt_type="general_assistant"):
         | model
     )
 
-def create_user_prompt(prompt_type):
-    params = {}
+def create_user_prompt(params={}, prompt_type="general_assistant"):
+    if not params:
+        if prompt_type == "ocr_correction":
+            sentences = input("Enter the OCR extracted sentences to correct: ")
+            params["sentences"] = sentences
 
-    if prompt_type == "ocr_correction":
-        sentences = input("Enter the OCR extracted sentences to correct: ")
-        params["sentences"] = sentences
+        elif prompt_type == "note_template":
+            note_type = input("Enter the type of note you need (e.g., meeting, study): ")
+            key_elements = input("Enter the key elements/topics to include: ")
+            params["note_type"] = note_type
+            params["key_elements"] = key_elements
 
-    elif prompt_type == "note_template":
-        note_type = input("Enter the type of note you need (e.g., meeting, study): ")
-        key_elements = input("Enter the key elements/topics to include: ")
-        params["note_type"] = note_type
-        params["key_elements"] = key_elements
+        elif prompt_type == "idea_generator":
+            project_description = input("Describe the project or topic you need ideas for: ")
+            params["project_description"] = project_description
 
-    elif prompt_type == "idea_generator":
-        project_description = input("Describe the project or topic you need ideas for: ")
-        params["project_description"] = project_description
-
-    elif prompt_type == "content_creator":
-        topic = input("Enter the topic or sentence you need help expanding: ")
-        tone = input("Enter the tone (e.g., formal, informal, creative): ")
-        points = input("Enter the points you need help with: ")
-        params["topic"] = topic
-        params["tone"] = tone
-        params["points"] = points
+        elif prompt_type == "content_creator":
+            topic = input("Enter the topic or sentence you need help expanding: ")
+            tone = input("Enter the tone (e.g., formal, informal, creative): ")
+            points = input("Enter the points you need help with: ")
+            params["topic"] = topic
+            params["tone"] = tone
+            params["points"] = points
 
     if prompt_type == "general_assistant":
         prompt_input = input("You: ")
@@ -111,3 +109,4 @@ def create_user_prompt(prompt_type):
         user_message = HumanMessage(content=formatted_message)
 
     return user_message
+

@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-from env_setup import MONGO_URI
+from .env_setup import MONGO_URI
 
 # Setup MongoDB connection
 try:

@@ -1,6 +1,6 @@
-from chat_history import get_session_history
-from prompt_setup import create_chain, create_user_prompt
-from langchain_core.messages import HumanMessage, AIMessage
+from .chat_history import get_session_history
+from .prompt_setup import create_chain, create_user_prompt
+from langchain_core.messages import HumanMessage
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 if __name__ == "__main__":
@@ -24,7 +24,6 @@ if __name__ == "__main__":
         print("\n--- Continue previous conversation ---\n")
     else:
         print("No previous chat history found. Starting a new conversation...\n")
-
 
 
     while True:
