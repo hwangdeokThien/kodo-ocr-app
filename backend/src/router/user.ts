@@ -109,7 +109,7 @@ async function updateUserImage(id: string, body: any) {
         const arrayBuffer = await body.avatar.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        const fileName = `public/users/${id}.jpg`;
+        const fileName = `public/users/${id + '_' + Date.now().toString()}.jpg`;
         const putObjectParams = {
             Bucket: bucketName,
             Key: fileName,

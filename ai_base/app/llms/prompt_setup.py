@@ -44,10 +44,7 @@ prompts = {
 
 user_input_prompt = {
     "general_assistant": "You: ",
-    "ocr_correction": '''
-            Below the sentences to analyze:
-            {sentences}
-            ''',
+    "ocr_correction": "\nBelow the sentences to analyze:\n{sentences}",
     "note_template": "I need a {note_type} template. The template should include sections for {key_elements} and be easy to follow.",
     "idea_generator": "I am working on {project_description} and need ideas to get started.",
     "content_creator": "I need help expanding on {topic}. The content should be {tone} and focus on {points}.",
@@ -78,7 +75,9 @@ def create_chain(prompt_type="general_assistant"):
 
 def create_user_prompt(params={}, prompt_type="general_assistant"):
     if not params:
-        if prompt_type == "ocr_correction":
+        if prompt_type == "general_assistant":
+            prompt_input = input("You: ")
+        elif prompt_type == "ocr_correction":
             sentences = input("Enter the OCR extracted sentences to correct: ")
             params["sentences"] = sentences
 
@@ -101,7 +100,7 @@ def create_user_prompt(params={}, prompt_type="general_assistant"):
             params["points"] = points
 
     if prompt_type == "general_assistant":
-        prompt_input = input("You: ")
+        prompt_input = params['message']
         user_message = HumanMessage(content=prompt_input)
     else:
         template = user_input_prompt[prompt_type]

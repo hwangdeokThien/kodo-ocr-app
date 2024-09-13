@@ -1,6 +1,7 @@
 from .chat_history import get_session_history
 from .prompt_setup import create_chain, create_user_prompt
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.messages import HumanMessage
 
 class LLMTrigger:
     def __init__(self, session_id="s1", prompt_type="general_assistant"):
@@ -16,7 +17,11 @@ class LLMTrigger:
         self.config = {"configurable": {"session_id": "s1"}}
         
     def get_messages_history(self):
-        return self.session_history.messages
+        formated_messages = []
+        for message in self.session_history.messages:
+            role = "User" if isinstance(message, HumanMessage) else "Chatbot"
+            formated_messages.append(f"{role}: {message.content}")
+        return formated_messages
     
     def invoke(self, params):
         user_message = create_user_prompt(params, prompt_type=self.prompt_type)

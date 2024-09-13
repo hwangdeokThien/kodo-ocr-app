@@ -17,6 +17,25 @@ const s3 = new S3Client({
 
 async function scanPhoto(body: any) {
     try {
+        const formData = new FormData()
+        formData.append('image', body.photo, 'image.jpg')
+        formData.append('req_struct', 'false')
+        formData.append('llm_aided', 'true')
+
+        // Send the request to the Flask API
+        const reg_det_text = await fetch('http://127.0.0.1:5000/scan', {
+            method: 'POST',
+            body: formData
+        })
+
+        return reg_det_text;
+    } catch (error) {
+        console.log(`Error scanning note: ${error}`);
+    }
+}
+
+async function savePhoto(body: any) {
+    try {
         const arrayBuffer = await body.photo.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
@@ -33,6 +52,7 @@ async function scanPhoto(body: any) {
         console.log(response);
 
         const url = `https://${bucketName}.s3.amazonaws.com/${fileName}`
+
         return url;
     } catch (error) {
         console.log(`Error scanning note: ${error}`);

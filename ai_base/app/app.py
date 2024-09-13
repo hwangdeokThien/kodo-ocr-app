@@ -55,8 +55,9 @@ def scan():
 @app.route('/ai_gen', methods=['POST'])
 def ai_gen():
     config = request.form.to_dict()
+    print(config)
     prompt_type = config.get('prompt_type', 'general_assistant')
-    params = config.get('params', {})
+    params = {k: v for k, v in config.items() if k != 'prompt_type'}
 
     output = trigger[prompt_type].invoke(params=params)
     
@@ -67,7 +68,9 @@ def chat_history():
     config = request.form.to_dict()
     prompt_type = config.get('prompt_type', 'general_assistant')
 
-    return trigger[prompt_type].get_messages_history()
+    chat_history = trigger[prompt_type].get_messages_history()
+
+    return chat_history
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
