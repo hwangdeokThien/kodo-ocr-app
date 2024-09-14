@@ -1,4 +1,6 @@
-app/__pychache__/*
+app/__pycache__/*
+app/ocr/__pycache__/*
+app/llms/__pycache__/*
 .DS_Store
 app/paddleocr_det/*
 app/vietocr_weights/*
