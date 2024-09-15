@@ -10,7 +10,7 @@ class OCRModel:
         self.text_det = PaddleOCR(
             ir_optim=True,
             lang='german',
-            det_model_dir='./ocr/paddleocr_config',
+            det_model_dir='./paddleocr_config',
             rec=False,
             use_angle_cls=False
         )
