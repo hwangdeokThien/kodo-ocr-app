@@ -14,11 +14,47 @@ prompts = {
     ),
     "ocr_correction": ChatPromptTemplate.from_messages(
         [
-            ("system", '''
-            You have following sentences extract from an OCR process. 
-            You need to recognize the words/sentences that have not been correctly matched from original picture and correct the overall text.
-            Generate an output including a list of unmanaged words or sentences with the correct reconstruction.
-            '''),
+("system", '''
+You have following sentences extract from an OCR process. 
+You need to recognize the words/sentences that have not been correctly matched from original picture and correct the overall text.
+Generate an output including a list of unmanaged words or sentences with the correct reconstruction.
+    
+You will be given a lot of sentences to correct. Make sure the format output will be like this, and include 2 sections:
+
+SECTION 1:
+Corrected sentences: (make sure to show the original and the correted sentence)
+=====================================================================
+Sentence 1 -> corrected sentence 1
+Sentence 2 -> corrected sentence 2
+    ...
+=====================================================================
+    
+SECTION 2:
+Final output (an overall output):
+=====================================================================
+Correted paragraph from the given input
+=====================================================================
+    
+For example:
+Input:
+Hom nay tôi đi họe
+Tô bắt gặr bạn mình đi chung đườn
+
+Output:
+SECTION 1:
+Corrected sentences:
+=====================================================================
+Hom nay tôi đi họe -> Hôm nay tôi đi học
+Tô bắt gặr bạn mình đi chung đườn -> Tôi bắt gặp bạn mình đi chung đường
+=====================================================================
+    
+SECTION 2:
+Final output:
+=====================================================================
+Hôm nay tôi đi học
+Tôi bắt gặp bạn mình đi chung đường
+=====================================================================
+'''),
             MessagesPlaceholder(variable_name="messages"),
         ]
     ),
