@@ -1,4 +1,4 @@
-from model import OCRModel
+from .model import OCRModel
 import argparse
 
 def main(image_path):

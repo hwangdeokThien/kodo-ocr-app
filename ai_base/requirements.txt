@@ -8,3 +8,7 @@ opencv-python==4.10.0.84
 torch==2.3.1
 torchaudio==2.3.1
 torchvision==0.18.1
+langchain==0.2.16
+langchain-openai==0.1.23
+pymongo==4.8.0
+python-dotenv==1.0.1
