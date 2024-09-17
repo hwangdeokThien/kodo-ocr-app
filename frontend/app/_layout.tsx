@@ -13,7 +13,6 @@ import { PaperProvider } from "react-native-paper";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { store } from "@/redux/store";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

@@ -195,7 +195,9 @@ export default function HomeScreen() {
       formData.append("createdDate", createdDate.toISOString());
       formData.append("modifiedDate", modifiedDate.toISOString());
 
-      const response = await axios.post(`${URL}/api/notes`, formData, {
+      const response = await fetch(`${URL}/api/notes`, {
+        method: "POST",
+        body: formData,
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -261,7 +263,6 @@ export default function HomeScreen() {
             setFilteredNotes(data);
           });
         });
-        // console.log(data);
       } catch (err) {
         console.log(`Error fetching note data: ${err}`);
       } finally {
