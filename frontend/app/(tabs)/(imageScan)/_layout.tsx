@@ -13,6 +13,7 @@ import {
   View,
   Dimensions,
   Alert,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -29,6 +30,9 @@ import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import LoadTextModal from "./loadTextModal";
+import * as SQLite from "expo-sqlite/legacy";
+import SelectParamsModal from "./selectParamsModal";
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -36,8 +40,22 @@ const screenHeight = Dimensions.get("screen").height;
 export default function ImageScan() {
   const [facing, setFacing] = useState(CameraType.back);
   const [image, setImage] = useState<any>(null);
+  const [loadTextModalVisible, setLoadTextModalVisible] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
+  const [scanContent, setScanContent] = useState('');
   const cameraRef = useRef<CameraView>(null);
+  const [paramsModalVisible, setParamsModalVisible] = useState(false);
+  const [selectedParams, setSelectedParams] = useState({
+    req_struct: "False",
+    llm_aided: "True",
+  });
+  
+  const URL =
+  Platform.OS === "ios"
+    ? process.env.EXPO_PUBLIC_URL_IOS
+    : process.env.EXPO_PUBLIC_URL_ANDROID;
+
+  const db = SQLite.openDatabase("notes.db");
 
   const permissionAlert = () =>
     Alert.alert(
@@ -66,6 +84,12 @@ export default function ImageScan() {
 
   const handlePalletteClick = () => {};
 
+  const toggleCameraFacing = () => {
+    setFacing((current) =>
+      current === CameraType.back ? CameraType.front : CameraType.back
+    );
+  };
+
   const handleTakePhoto = async () => {
     const havePermission = checkPermission();
     if (havePermission) {
@@ -90,8 +114,7 @@ export default function ImageScan() {
   const handleAddImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [screenWidth * 0.85, screenHeight * 0.5],
+      allowsEditing: false,
       quality: 1,
     });
 
@@ -105,33 +128,105 @@ export default function ImageScan() {
     setImage(null);
   };
 
+  const handleConfirmParams = (reqStruct: string, llmAided: string) => {
+    setSelectedParams({
+      req_struct: reqStruct,
+      llm_aided: llmAided,
+    });
+    handleVerifyImage();
+  };
+
   const handleVerifyImage = async () => {
     try {
+      const params = {
+        req_struct: "False",
+        llm_aided: "True",
+      }
+
       const uploadResponse = await FileSystem.uploadAsync(
-        "http://localhost:3009/api/photos/scan",
+        `${URL}/api/photos/scan`,
         image.uri,
         {
           fieldName: "photo",
           httpMethod: "POST",
           uploadType: FileSystem.FileSystemUploadType.MULTIPART,
           mimeType: image.mimeType,
+          parameters: params
         }
       );
 
+      let finalOutput = ''
+      if (params.llm_aided === "True") {
+        const sections = uploadResponse.body.split('=====================================================================');
+        finalOutput = sections[3].trim(); 
+      } else if (params.req_struct === "False") {
+        const parsedResponse = JSON.parse(uploadResponse.body);
+        finalOutput = parsedResponse.join('\n');
+      }
+      
+      setScanContent(finalOutput);
+      setLoadTextModalVisible(true);
+      
       if (uploadResponse.status === 200) {
-        console.log("Upload success!");
+        console.log("Scan success!");
       } else {
-        console.error("Upload failed!");
+        console.error("Scan failed!");
       }
     } catch (error) {
-      console.error("Error during upload:", error);
+      console.error("Error during scan:", error);
     }
   };
 
-  const toggleCameraFacing = () => {
-    setFacing((current) =>
-      current === CameraType.back ? CameraType.front : CameraType.back
-    );
+  const saveNoteToCloud = async (
+    id: number | undefined,
+    title: string,
+    content: string,
+    createdDate: Date,
+    modifiedDate: Date
+  ) => {
+    try {
+      const formData = new FormData();
+      formData.append("id", id?.toString() || "");
+      formData.append("title", title);
+      formData.append("content", content);
+      formData.append("createdDate", createdDate.toISOString());
+      formData.append("modifiedDate", modifiedDate.toISOString());
+
+      const response = await fetch(`${URL}/api/notes`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Note saved successfully:", response);
+    } catch (error) {
+      console.error("Error saving note:", error);
+    }
+  };
+
+  const handleSaveNote = (
+    title: string,
+    content: string,
+    createdDate: Date,
+    modifiedDate: Date
+  ) => {
+    console.log("Saving note:", title, content, createdDate, modifiedDate);
+    db.transaction((tx) => {
+      tx.executeSql(
+        "INSERT INTO notes (title, content, createdDate, modifiedDate) VALUES (?, ?, ?, ?)",
+        [title, content, createdDate.toISOString(), modifiedDate.toISOString()],
+        (_, { insertId }) => {
+          console.log("Note inserted with ID:", insertId);
+          saveNoteToCloud(insertId, title, content, createdDate, modifiedDate);
+        },
+        (tx, error) => {
+          console.log("Error inserting note:", error);
+          return true;
+        }
+      );
+    });
   };
 
   return (
@@ -269,6 +364,19 @@ export default function ImageScan() {
             <FontAwesomeIcon icon={faCameraRotate} size={35} color="#40A578" />
           </TouchableOpacity>
         </View>
+
+        <SelectParamsModal
+        isVisible={paramsModalVisible}
+        onClose={() => setParamsModalVisible(false)}
+        onConfirm={handleConfirmParams}
+        />
+
+        <LoadTextModal
+        isVisible={loadTextModalVisible}
+        onClose={() => setLoadTextModalVisible(false)}
+        onSave={handleSaveNote}
+        content={scanContent}
+        />
       </SafeAreaView>
     </>
   );
