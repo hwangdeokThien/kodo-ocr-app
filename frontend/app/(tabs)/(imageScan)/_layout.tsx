@@ -138,11 +138,6 @@ export default function ImageScan() {
 
   const handleVerifyImage = async () => {
     try {
-      const params = {
-        req_struct: "False",
-        llm_aided: "True",
-      }
-
       const uploadResponse = await FileSystem.uploadAsync(
         `${URL}/api/photos/scan`,
         image.uri,
@@ -151,15 +146,15 @@ export default function ImageScan() {
           httpMethod: "POST",
           uploadType: FileSystem.FileSystemUploadType.MULTIPART,
           mimeType: image.mimeType,
-          parameters: params
+          parameters: selectedParams
         }
       );
 
       let finalOutput = ''
-      if (params.llm_aided === "True") {
+      if (selectedParams.llm_aided === "True") {
         const sections = uploadResponse.body.split('=====================================================================');
         finalOutput = sections[3].trim(); 
-      } else if (params.req_struct === "False") {
+      } else if (selectedParams.req_struct === "False") {
         const parsedResponse = JSON.parse(uploadResponse.body);
         finalOutput = parsedResponse.join('\n');
       }
@@ -337,7 +332,7 @@ export default function ImageScan() {
                 shadowColor: "#40A578",
                 shadowOpacity: 0.1,
               }}
-              onPress={handleVerifyImage}
+              onPress={() => setParamsModalVisible(true)}
             >
               <FontAwesomeIcon icon={faCircleCheck} size={70} color="#40A578" />
             </TouchableOpacity>
