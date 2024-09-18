@@ -293,7 +293,7 @@ export default function HomeScreen() {
     const sortedNotes = [...filteredNotes].sort((a, b) => {
       const dateA = new Date(a.modifiedDate || a.createdDate).getTime();
       const dateB = new Date(b.modifiedDate || b.createdDate).getTime();
-      return order === "oldest" ? dateB - dateA : dateA - dateB;
+      return order === "newest" ? dateB - dateA : dateA - dateB;
     });
 
     setFilteredNotes(sortedNotes);
