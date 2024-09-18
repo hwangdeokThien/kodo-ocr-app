@@ -81,7 +81,7 @@ export default function HomeScreen() {
         "INSERT INTO notes (title, content, createdDate, modifiedDate) VALUES (?, ?, ?, ?)",
         [title, content, createdDate.toISOString(), modifiedDate.toISOString()],
         (_, { insertId }) => {
-          console.log("Note inserted with ID:", insertId); // Log the insertId
+          console.log("Note inserted with ID:", insertId);
           setNotesData([
             ...notesData,
             {
@@ -327,16 +327,29 @@ export default function HomeScreen() {
           }}
         >
           <Text style={styles.homeText}> Your Note</Text>
-          <TouchableOpacity
-            onPress={() => {
-              setAddNoteModalVisible(true);
-            }}
-          >
-            <Ionicons
-              name="create-outline"
-              style={{ fontSize: 36, color: "#4F6F52" }}
-            />
-          </TouchableOpacity>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              onPress={() => {
+                setAddNoteModalVisible(true);
+              }}
+            >
+              <Ionicons
+                name="chatbubble-outline"
+                style={{ fontSize: 36, color: "#4F6F52"}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setAddNoteModalVisible(true);
+              }}
+            >
+              <Ionicons
+                name="create-outline"
+                style={{ fontSize: 36, color: "#4F6F52" , marginLeft: 10}}
+              />
+            </TouchableOpacity>
+          </View>
+          
         </View>
 
         <View style={styles.searchAndFilter}>
