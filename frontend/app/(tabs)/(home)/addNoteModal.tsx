@@ -87,7 +87,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
         if (response.ok) {
           const resultText = await response.text();
           console.log("API Response (HTML/Text):", resultText);
-          setNoteContent(noteContent + resultText);
+          setNoteContent(noteContent + '\n\nGenerated:\n' + resultText);
           setFormFields({});
           setBotOption(null);
         } else {
@@ -121,9 +121,9 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
         {botOption === "idea_generator" && (
           <TextInput
             placeholder="Project Descriptions"
-            value={formFields.project_descriptions || ""}
+            value={formFields.project_description || ""}
             onChangeText={(text) =>
-              handleFormFieldChange("project_descriptions", text)
+              handleFormFieldChange("project_description", text)
             }
             style={styles.input}
           />
