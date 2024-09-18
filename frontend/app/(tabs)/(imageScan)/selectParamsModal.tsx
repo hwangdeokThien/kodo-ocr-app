@@ -29,6 +29,7 @@ const SelectParamsModal: React.FC<SelectParamsModalProps> = ({
               onValueChange={(itemValue: string) => setReqStruct(itemValue)}
               style={styles.picker}
               itemStyle={styles.pickerItem}
+              selectionColor={"#40A578"}
             >
               <Picker.Item label="Yes" value="True" />
               <Picker.Item label="No" value="False" />
@@ -43,7 +44,7 @@ const SelectParamsModal: React.FC<SelectParamsModalProps> = ({
               style={styles.picker}
               itemStyle={styles.pickerItem}
             >
-              <Picker.Item label="Yes" value="True" />
+              <Picker.Item label="Yes" value="True"/>
               <Picker.Item label="No" value="False" />
             </Picker>
           </View>
@@ -97,14 +98,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
     color: "#333",
-    marginTop: 30,
+    marginTop: 40,
     fontFamily: "Dosis-Medium",
   },
   pickerContainer: {
     width: "100%",
     borderRadius: 10,
     backgroundColor: "transparent",
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 15,
     padding: 5,
   },
@@ -116,7 +117,6 @@ const styles = StyleSheet.create({
     marginTop: -83,
     fontSize: 16,
     fontFamily: "Dosis-Medium",  
-    backgroundColor: 'transparent',
   },
   buttonContainer: {
     flexDirection: "row",
