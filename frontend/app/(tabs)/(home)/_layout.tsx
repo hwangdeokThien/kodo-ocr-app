@@ -23,6 +23,7 @@ import { RootState } from "@/redux/store";
 import EditNoteModal from "./editNoteModal";
 import { Menu } from "react-native-paper";
 import axios from "axios";
+import ChatBotModal from "./chatBotModal";
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -39,6 +40,7 @@ export default function HomeScreen() {
   const [sortOrder, setSortOrder] = useState("newest");
   const [addNoteModalVisible, setAddNoteModalVisible] = useState(false);
   const [editNoteModalVisible, setEditNoteModalVisible] = useState(false);
+  const [isChatBotVisible, setIsChatBotVisible] = useState(false);
   const [selectedNote, setSelectedNote] = useState<NoteProps | null>(null);
   const [visibleMenus, setVisibleMenus] = useState<VisibleMenus>({});
   const URL =
@@ -47,9 +49,7 @@ export default function HomeScreen() {
       : process.env.EXPO_PUBLIC_URL_ANDROID;
   const [anchor, setAnchor] = useState({ x: 0, y: 0 });
   const notes = useSelector((state: RootState) => state.note.notes);
-
   const dispatch = useDispatch();
-
   const db = SQLite.openDatabase("notes.db");
 
   const openMenu = (noteId: any) => {
@@ -330,7 +330,7 @@ export default function HomeScreen() {
           <View style={{ flexDirection: "row" }}>
             <TouchableOpacity
               onPress={() => {
-                setAddNoteModalVisible(true);
+                setIsChatBotVisible(true);
               }}
             >
               <Ionicons
@@ -431,6 +431,10 @@ export default function HomeScreen() {
           </View>
         </View>
       </Modal>
+      <ChatBotModal
+        isVisible={isChatBotVisible}
+        onClose={() => setIsChatBotVisible(false)}
+      />
       <AddNoteModal
         isVisible={addNoteModalVisible}
         onClose={() => setAddNoteModalVisible(false)}
