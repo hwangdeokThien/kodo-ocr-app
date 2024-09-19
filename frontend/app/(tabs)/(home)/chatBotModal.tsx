@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Modal, View, StyleSheet, TextInput, TouchableOpacity, Text, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-interface Message {
-  role: 'human' | 'ai';
+export interface Message {
+  role: 'User' | 'Chatbot';
   content: string;
 }
 
@@ -19,41 +19,57 @@ const ChatBotModal: React.FC<ChatBotModalProps> = ({
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState<string>("");
-  const API_URL = "https://your-api-url.com/api/chat";
+  const flatListRef = useRef<FlatList | null>(null);
+  const AI_URL = process.env.EXPO_PUBLIC_AI_BASE_URL;
 
   useEffect(() => {
-    const initialMessages: Message[] = [
-      {role: 'human', content:'hello, my name is Thien.'},
-      { role: 'ai', content: "Hello! How can I help you today?" },
-    ];
-    setMessages(initialMessages);
+    const fetchMessageHistory = async () => {
+      try {
+        const formData = new FormData();
+        formData.append('prompt_type', 'general_assistant');
+  
+        const response = await fetch(`${AI_URL}/chat_history`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+
+        const parsedMessages = data.map((message: string) => {
+          const [role, content] = message.split(': ');
+          return { role, content };
+        });
+  
+        setMessages(parsedMessages);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    fetchMessageHistory();
   }, []);
 
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
 
-    // Add the human message to the conversation
     const newMessages: Message[] = [
       ...messages,
-      { role: 'human', content: inputText }
+      { role: 'User', content: inputText }
     ];
     setMessages(newMessages);
     setInputText("");
 
     try {
-      // Send the message to the API
-      const response = await fetch(API_URL, {
+      const formData = new FormData();
+      formData.append('prompt_type', 'general_assistant');
+      formData.append('message', inputText);
+
+      const response = await fetch(`${AI_URL}/ai_gen`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: inputText }),
+        body: formData
       });
+      const receivedMessage = await response.text();
+      const aiResponse: Message = { role: 'Chatbot', content: receivedMessage };
 
-      const data = await response.json();
-      const aiResponse: Message = { role: 'ai', content: data.content };
-
-      // Update the conversation with the AI's response
       setMessages((prevMessages) => [...prevMessages, aiResponse]);
 
     } catch (error) {
@@ -62,7 +78,7 @@ const ChatBotModal: React.FC<ChatBotModalProps> = ({
   };
 
   const renderMessageItem = ({ item }: { item: Message }) => {
-    const isHuman = item.role === 'human';
+    const isHuman = item.role === 'User';
     return (
       <View style={[styles.messageBubble, isHuman ? styles.humanBubble : styles.aiBubble]}>
         <Text style={isHuman ? styles.humanText : styles.aiText}>{item.content}</Text>
@@ -81,17 +97,19 @@ const ChatBotModal: React.FC<ChatBotModalProps> = ({
       <SafeAreaProvider>
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
+            <View style={{ justifyContent: "space-between", flexDirection: "row", paddingBottom: 15 }}>
               <TouchableOpacity onPress={onClose} style={styles.backArrow}>
                 <Ionicons name="arrow-back" size={24} color="black" />
               </TouchableOpacity>
             </View>
             <FlatList
+              ref={flatListRef}
               data={messages}
               renderItem={renderMessageItem}
               keyExtractor={(item, index) => index.toString()}
               style={styles.messageList}
               contentContainerStyle={{ paddingBottom: 20 }}
+              onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
             />
             <View style={styles.inputContainer}>
               <TextInput
@@ -105,7 +123,7 @@ const ChatBotModal: React.FC<ChatBotModalProps> = ({
               </TouchableOpacity>
             </View>
           </View>
-          </SafeAreaView>
+        </SafeAreaView>
       </SafeAreaProvider>
     </Modal>
   );
@@ -129,7 +147,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   backArrow: {
-    alignSelf: "flex-start",
+    alignSelf: "center",
   },
   messageBubble: {
     maxWidth: "80%",
@@ -138,22 +156,24 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   humanBubble: {
+    marginRight: 6,
     backgroundColor: "#006769",
     alignSelf: "flex-end",
   },
   aiBubble: {
+    marginLeft: 6,
     backgroundColor: "#EADBC8",
     alignSelf: "flex-start",
   },
   aiText: {
     color: "black",
     fontSize: 16,
-    fontFamily: 'Dosis-Regular'
+    fontFamily: 'Dosis-Regular',
   },
   humanText: {
     color: "white",
     fontSize: 16,
-    fontFamily: 'Dosis-Regular'
+    fontFamily: 'Dosis-Regular',
   },
   inputContainer: {
     flexDirection: "row",
