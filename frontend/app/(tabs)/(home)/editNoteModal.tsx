@@ -171,21 +171,29 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
       onRequestClose={onClose}
     >
       <SafeAreaProvider>
-      <SafeAreaView style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <View
-            style={{ justifyContent: "space-between", flexDirection: "row" }}
-          >
-            <TouchableOpacity
-              onPress={() => onClose()}
-              style={styles.backArrow}
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View
+              style={{ justifyContent: "space-between", flexDirection: "row" }}
             >
-              <Ionicons name="arrow-back" size={24} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleSaveNote} style={styles.backArrow}>
-              <Ionicons name="checkmark" size={28} color="black" />
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                onPress={() => onClose()}
+                style={styles.backArrow}
+              >
+                <Ionicons name="arrow-back" size={24} color="black" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => setBotModalVisible(true)}
+                style={styles.botButton}
+              >
+                <Ionicons name="chatbubble-outline" size={28} color="black" />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={handleSaveNote} style={styles.backArrow}>
+                <Ionicons name="checkmark" size={28} color="black" />
+              </TouchableOpacity>
+            </View>
 
             <TextInput
               style={styles.inputTitle}
