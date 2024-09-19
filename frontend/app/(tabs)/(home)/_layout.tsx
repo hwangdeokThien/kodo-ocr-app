@@ -43,6 +43,7 @@ export default function HomeScreen() {
   const [isChatBotVisible, setIsChatBotVisible] = useState(false);
   const [selectedNote, setSelectedNote] = useState<NoteProps | null>(null);
   const [visibleMenus, setVisibleMenus] = useState<VisibleMenus>({});
+  
   const URL =
     Platform.OS === "ios"
       ? process.env.EXPO_PUBLIC_URL_IOS
