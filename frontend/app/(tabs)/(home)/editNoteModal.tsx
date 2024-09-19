@@ -2,32 +2,32 @@ import { NoteProps } from "@/components/Note";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
-  Modal,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
+    Modal,
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 interface EditNoteModalProps {
-  isVisible: boolean;
-  note: NoteProps;
-  onClose: () => void;
-  onSave: (
-    id: number | undefined,
-    title: string,
-    content: string,
-    modifiedDate: Date
-  ) => void;
+    isVisible: boolean;
+    note: NoteProps;
+    onClose: () => void;
+    onSave: (
+        id: number | undefined,
+        title: string,
+        content: string,
+        modifiedDate: Date
+    ) => void;
 }
 
 const EditNoteModal: React.FC<EditNoteModalProps> = ({
-  isVisible,
-  note,
-  onClose,
-  onSave,
+    isVisible,
+    note,
+    onClose,
+    onSave,
 }) => {
   const [noteTitle, setNoteTitle] = useState(note.title);
   const [noteContent, setNoteContent] = useState(note.content);
@@ -37,17 +37,17 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
   const [formFields, setFormFields] = useState<any>({});
   const AI_URL = process.env.EXPO_PUBLIC_AI_BASE_URL;
 
-  const date = new Date().toLocaleDateString();
-  const time = new Date().toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  const dateTime = `${date} ${time}`;
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+    const dateTime = `${date} ${time}`;
 
-  const handleNoteContentChange = (text: string) => {
-    setNoteContent(text);
-    setCharCount(text.length);
-  };
+    const handleNoteContentChange = (text: string) => {
+        setNoteContent(text);
+        setCharCount(text.length);
+    };
 
   const handleSaveNote = () => {
     onSave(note.id, noteTitle, noteContent, new Date());
