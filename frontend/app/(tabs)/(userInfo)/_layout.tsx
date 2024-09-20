@@ -58,7 +58,6 @@ export default function UserInfoScreen() {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                console.log(URL);
                 const response = await fetch(`${URL}/api/users/${id}`, {
                     method: "GET",
                     headers: {
@@ -87,12 +86,10 @@ export default function UserInfoScreen() {
                             obj[cleanKey] = cleanValue;
                         });
                     }
-
                     return obj;
                 };
 
                 const textData = await response.text();
-                // console.log(textData);
 
                 const userData = parseStringToObject(textData) as UserInfoProps;
                 if (userData.dateOfBirth) {
@@ -100,7 +97,6 @@ export default function UserInfoScreen() {
                   userData.dateOfBirth = formattedDate;
                   console.log('Formatted Date of Birth:', formattedDate);
                 }
-                console.log(userData);
                 setUserInfo(userData);
                 const storedAvatar = await AsyncStorage.getItem(
                     AVATAR_STORAGE_KEY
@@ -183,7 +179,7 @@ export default function UserInfoScreen() {
                 <View style={styles.content}>
                     <Text style={styles.userName}>{userInfo.name}</Text>
                     <Text style={styles.userBio}>{userInfo.bio}</Text>
-                    <View style={styles.userInfoBox}>
+                    <TouchableOpacity style={styles.userInfoBox} onLongPress={() => setEditModalVisible(true)}>
                         {Object.entries(userInfo)
                             .filter(
                                 ([field]) =>
@@ -196,37 +192,9 @@ export default function UserInfoScreen() {
                                     value={value}
                                 />
                             ))}
-                    </View>
-                </View>
-                <View style={{ height: screenWidth * 0.15 }} />
-                <View style={{ alignItems: "center" }}>
-                    <TouchableOpacity
-                        style={{
-                            borderColor: "grey",
-                            borderWidth: 2,
-                            borderRadius: 10,
-                            backgroundColor: "white",
-                            padding: 10,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            flexDirection: "row",
-                            width: screenWidth * 0.6,
-                        }}
-                        onPress={() => {
-                            setEditModalVisible(true);
-                        }}
-                    >
-                        <AntDesign name="edit" size={24} color="black" />
-                        <Text
-                            style={{
-                                fontFamily: "Dosis-Regular",
-                                fontSize: 24,
-                            }}
-                        >
-                            {`     `} Edit profile
-                        </Text>
                     </TouchableOpacity>
                 </View>
+                <View style={{ height: screenWidth * 0.15 }} />
             </ParallaxScrollView>
             <View
                 style={{

@@ -28,12 +28,8 @@ const InfoItem = ({ field, value }: ItemProps) => {
     const displayValue =
         value instanceof Date ? formatISODate(value.toISOString()) : value;
 
-    const handleTouch = () => {
-        return value;
-    };
-
     return (
-        <TouchableOpacity onPress={handleTouch} style={styles.itemRow}>
+        <View style={styles.itemRow}>
             <View style={styles.labelContainer}>
                 <Ionicons
                     name={iconTagForField[field]}
@@ -50,7 +46,7 @@ const InfoItem = ({ field, value }: ItemProps) => {
                     }
                 </Text>
             </View>
-            </TouchableOpacity>
+        </View>
     );
 };
 
