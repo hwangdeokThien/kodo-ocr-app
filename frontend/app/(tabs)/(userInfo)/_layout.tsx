@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import EditProfileModal from "./editProfileModal";
 import { Ionicons } from "@expo/vector-icons";
 import { format } from 'date-fns';
+import * as FileSystem from "expo-file-system";
 
 type UserInfoProps = {
     username: string;
@@ -157,6 +158,21 @@ export default function UserInfoScreen() {
             try {
                 await AsyncStorage.setItem(AVATAR_STORAGE_KEY, selectedImage);
                 console.log("Avatar saved to AsyncStorage");
+                const uploadResponse = await FileSystem.uploadAsync(
+                    `${URL}/api/avatar/${id}`,
+                    image.uri,
+                    {
+                      fieldName: "avatar",
+                      httpMethod: "POST",
+                      uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+                      mimeType: image.mimeType,
+                    }
+                );
+                if (uploadResponse.status === 200) {
+                    console.log('Save avatar to cloud successfully!');
+                } else {
+                    console.log('Save avatar failed!');
+                }
             } catch (error) {
                 console.log("Error saving avatar to AsyncStorage", error);
             }

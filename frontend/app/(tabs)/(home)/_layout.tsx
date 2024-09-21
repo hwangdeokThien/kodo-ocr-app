@@ -103,7 +103,14 @@ export default function HomeScreen() {
               modifiedDate,
             },
           ]);
-          console.log("Notes data:", notesData);
+          dispatch(pushNote({
+            id: insertId,
+            title,
+            content,
+            createdDate,
+            modifiedDate,
+          }));
+          // console.log("Notes data:", notesData);
           saveNote(insertId, title, content, createdDate, modifiedDate);
         },
         (tx, error) => {
@@ -258,7 +265,7 @@ export default function HomeScreen() {
             for (let i = 0; i < rows.length; i++) {
               data.push(rows.item(i));
             }
-            console.log(data);
+            // console.log(data);
             dispatch(setNotes(data));
             setNotesData(data);
             setFilteredNotes(data);

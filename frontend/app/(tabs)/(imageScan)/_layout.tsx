@@ -30,8 +30,11 @@ import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import { useDispatch } from "react-redux";
+import { pushNote, setNotes } from "@/redux/noteReducer";
 import LoadTextModal from "./loadTextModal";
 import * as SQLite from "expo-sqlite/legacy";
+
 import SelectParamsModal from "./selectParamsModal";
 
 const screenWidth = Dimensions.get("screen").width;
@@ -49,6 +52,7 @@ export default function ImageScan() {
     req_struct: "False",
     llm_aided: "True",
   });
+  const dispatch = useDispatch();
   
   const URL =
   Platform.OS === "ios"
@@ -214,6 +218,15 @@ export default function ImageScan() {
         [title, content, createdDate.toISOString(), modifiedDate.toISOString()],
         (_, { insertId }) => {
           console.log("Note inserted with ID:", insertId);
+          
+          dispatch(pushNote({
+            id: insertId,
+            title,
+            content,
+            createdDate,
+            modifiedDate,
+          }));
+          
           saveNoteToCloud(insertId, title, content, createdDate, modifiedDate);
         },
         (tx, error) => {
