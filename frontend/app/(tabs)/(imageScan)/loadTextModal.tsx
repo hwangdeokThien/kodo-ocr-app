@@ -65,7 +65,7 @@ const LoadTextModal: React.FC<LoadTextModalProps> = ({
       style={styles.modalContainer}
     >
       <SafeAreaProvider>
-      <SafeAreaView>
+      <SafeAreaView style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <View
             style={{ justifyContent: "space-between", flexDirection: "row" }}

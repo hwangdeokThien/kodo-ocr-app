@@ -226,7 +226,8 @@ export default function ImageScan() {
             createdDate,
             modifiedDate,
           }));
-          
+
+          handleRemoveImage();
           saveNoteToCloud(insertId, title, content, createdDate, modifiedDate);
         },
         (tx, error) => {

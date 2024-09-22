@@ -18,7 +18,7 @@ import { NoteProps } from "@/components/Note";
 import AddNoteModal from "./addNoteModal";
 import { useDispatch, useSelector } from "react-redux";
 import * as SQLite from "expo-sqlite/legacy";
-import { pushNote, setNotes } from "@/redux/noteReducer";
+import { pushNote, setNotes, updateNote, deleteNote } from "@/redux/noteReducer";
 import { RootState } from "@/redux/store";
 import EditNoteModal from "./editNoteModal";
 import { Menu } from "react-native-paper";
@@ -111,7 +111,7 @@ export default function HomeScreen() {
             modifiedDate,
           }));
           // console.log("Notes data:", notesData);
-          saveNote(insertId, title, content, createdDate, modifiedDate);
+          saveNoteCloud(insertId, title, content, createdDate, modifiedDate);
         },
         (tx, error) => {
           console.log("Error inserting note:", error);
@@ -125,6 +125,7 @@ export default function HomeScreen() {
     id: number | undefined,
     title: string,
     content: string,
+    createdDate: Date,
     modifiedDate: Date
   ) => {
     if (id === undefined) {
@@ -137,8 +138,8 @@ export default function HomeScreen() {
     }
     db.transaction((tx) => {
       tx.executeSql(
-        "UPDATE notes SET title = ?, content = ?, modifiedDate = ? WHERE id = ?",
-        [title, content, modifiedDate.toISOString(), id],
+        "UPDATE notes SET title = ?, content = ?, modifiedDate = ?, createdDate = ? WHERE id = ?",
+        [title, content, modifiedDate.toISOString(), createdDate.toISOString(), id],
         () => {
           console.log("Note updated with ID:", id); // Log the insertId
           const updatedNotes = notesData.map((note) => {
@@ -152,6 +153,14 @@ export default function HomeScreen() {
             }
             return note;
           });
+
+          dispatch(updateNote({
+              id,
+              title,
+              content,
+              createdDate,
+              modifiedDate,
+          }));
           setNotesData(updatedNotes);
           setFilteredNotes(updatedNotes);
         },
@@ -161,7 +170,20 @@ export default function HomeScreen() {
         }
       );
     });
-    updateNote(id, title, content, modifiedDate);
+    updateNoteCloud(id, title, content, modifiedDate);
+  };
+
+  const deleteNoteCloud = async (id: number | undefined) => {
+    if (id === undefined) {
+      console.error("ID is undefined. Cannot delete note.");
+      return;
+    }
+    try {
+      const response = await axios.delete(`${URL}/api/notes/${id}`);
+      console.log("Note deleted successfully:", response);
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
   };
 
   const handleDeleteNote = (id: number | undefined) => {
@@ -178,6 +200,9 @@ export default function HomeScreen() {
           const updatedNotes = notesData.filter((note) => note.id !== id);
           setNotesData(updatedNotes);
           setFilteredNotes(updatedNotes);
+
+          dispatch(deleteNote(id));
+          deleteNoteCloud(id);
         },
         (tx, error) => {
           console.log("Error deleting note:", error);
@@ -188,7 +213,7 @@ export default function HomeScreen() {
     deleteNote(id);
   };
 
-  const saveNote = async (
+  const saveNoteCloud = async (
     id: number | undefined,
     title: string,
     content: string,
@@ -217,18 +242,7 @@ export default function HomeScreen() {
     }
   };
 
-  const deleteNote = async (id: number | undefined) => {
-    if (id === undefined) return;
-
-    try {
-      await axios.delete(`${URL}/api/notes/${id}`);
-      console.log("Note deleted successfully:", id);
-    } catch (error) {
-      console.error("Error deleting note:", error);
-    }
-  };
-
-  const updateNote = async (
+  const updateNoteCloud = async (
     id: number | undefined,
     title: string,
     content: string,

@@ -19,6 +19,7 @@ interface EditNoteModalProps {
         id: number | undefined,
         title: string,
         content: string,
+        createdDate: Date,
         modifiedDate: Date
     ) => void;
 }
@@ -50,7 +51,7 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
     };
 
   const handleSaveNote = () => {
-    onSave(note.id, noteTitle, noteContent, new Date());
+    onSave(note.id, noteTitle, noteContent, note.createdDate, new Date());
     onClose();
   };
 
