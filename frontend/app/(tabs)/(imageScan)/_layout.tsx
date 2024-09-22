@@ -34,7 +34,7 @@ import { useDispatch } from "react-redux";
 import { pushNote, setNotes } from "@/redux/noteReducer";
 import LoadTextModal from "./loadTextModal";
 import * as SQLite from "expo-sqlite/legacy";
-
+import LoadingModal from "@/components/LoadingModal";
 import SelectParamsModal from "./selectParamsModal";
 
 const screenWidth = Dimensions.get("screen").width;
@@ -43,6 +43,7 @@ const screenHeight = Dimensions.get("screen").height;
 export default function ImageScan() {
   const [facing, setFacing] = useState(CameraType.back);
   const [image, setImage] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [loadTextModalVisible, setLoadTextModalVisible] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
   const [scanContent, setScanContent] = useState('');
@@ -141,7 +142,8 @@ export default function ImageScan() {
   };
 
   const handleVerifyImage = async () => {
-    try {
+      setIsLoading(true);
+      try {
       const uploadResponse = await FileSystem.uploadAsync(
         `${URL}/api/photos/scan`,
         image.uri,
@@ -173,6 +175,8 @@ export default function ImageScan() {
       }
     } catch (error) {
       console.error("Error during scan:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -386,6 +390,8 @@ export default function ImageScan() {
         onSave={handleSaveNote}
         content={scanContent}
         />
+
+        <LoadingModal isVisible={isLoading} />
       </SafeAreaView>
     </>
   );

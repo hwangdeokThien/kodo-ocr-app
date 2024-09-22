@@ -1,0 +1,53 @@
+// LoadingModal.tsx
+import React from 'react';
+import { Modal, View, Image, StyleSheet, Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get("screen");
+
+interface LoadingModalProps {
+  isVisible: boolean;
+}
+
+const LoadingModal: React.FC<LoadingModalProps> = ({ isVisible }) => {
+  return (
+    <Modal
+      transparent={true}
+      animationType="fade"
+      visible={isVisible}
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles.loadingBox}>
+          <Image
+            source={require('../assets/gif/cute_loading.gif')}
+            style={styles.loadingImage}
+          />
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  loadingBox: {
+    width: width,
+    height: width,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    borderRadius: 20,
+    padding: 20,
+  },
+  loadingImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+  },
+});
+
+export default LoadingModal;
