@@ -44,7 +44,7 @@ const SelectParamsModal: React.FC<SelectParamsModalProps> = ({
               style={styles.picker}
               itemStyle={styles.pickerItem}
             >
-              <Picker.Item label="Yes" value="True"/>
+              <Picker.Item label="Yes" value="True" />
               <Picker.Item label="No" value="False" />
             </Picker>
           </View>
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     color: "#006769",
-    fontFamily: "Dosis-ExtraBold"
+    fontFamily: "Dosis-ExtraBold",
   },
   label: {
     fontSize: 18,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   pickerItem: {
     marginTop: -83,
     fontSize: 16,
-    fontFamily: "Dosis-Medium",  
+    fontFamily: "Dosis-Medium",
   },
   buttonContainer: {
     flexDirection: "row",

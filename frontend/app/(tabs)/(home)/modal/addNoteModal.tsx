@@ -32,7 +32,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
   const [botModalVisible, setBotModalVisible] = useState(false);
   const [botOption, setBotOption] = useState<string | null>(null);
   const [formFields, setFormFields] = useState<any>({});
-  const AI_URL = process.env.EXPO_PUBLIC_AI_BASE_URL
+  const AI_URL = process.env.EXPO_PUBLIC_AI_BASE_URL;
 
   const date = new Date().toLocaleDateString();
   const time = new Date().toLocaleTimeString([], {
@@ -71,8 +71,8 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
 
   const renderBotForm = () => {
     const handleApiCall = async () => {
-    formFields.prompt_type = botOption;
-    const formData = new FormData();
+      formFields.prompt_type = botOption;
+      const formData = new FormData();
       for (const key in formFields) {
         formData.append(key, formFields[key]);
       }
@@ -83,11 +83,11 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
           method: "POST",
           body: formData,
         });
-    
+
         if (response.ok) {
           const resultText = await response.text();
           console.log("API Response (HTML/Text):", resultText);
-          setNoteContent(noteContent + '\n\nGenerated:\n' + resultText);
+          setNoteContent(noteContent + "\n\nGenerated:\n" + resultText);
           setFormFields({});
           setBotOption(null);
         } else {
@@ -98,7 +98,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
         console.error("API call failed:", error);
       }
     };
-  
+
     return (
       <View>
         {botOption === "note_template" && (
@@ -112,12 +112,14 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
             <TextInput
               placeholder="Key Elements"
               value={formFields.key_elements || ""}
-              onChangeText={(text) => handleFormFieldChange("key_elements", text)}
+              onChangeText={(text) =>
+                handleFormFieldChange("key_elements", text)
+              }
               style={styles.input}
             />
           </View>
         )}
-  
+
         {botOption === "idea_generator" && (
           <TextInput
             placeholder="Project Descriptions"
@@ -128,7 +130,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
             style={styles.input}
           />
         )}
-  
+
         {botOption === "content_creator" && (
           <View>
             <TextInput
@@ -151,7 +153,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
             />
           </View>
         )}
-  
+
         <TouchableOpacity onPress={handleApiCall} style={styles.sendChatButton}>
           <Text style={styles.sendChatButtonText}>Submit</Text>
         </TouchableOpacity>
@@ -177,7 +179,9 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
       <SafeAreaProvider>
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
+            <View
+              style={{ justifyContent: "space-between", flexDirection: "row" }}
+            >
               <TouchableOpacity onPress={onClose} style={styles.backArrow}>
                 <Ionicons name="arrow-back" size={24} color="black" />
               </TouchableOpacity>
@@ -189,7 +193,10 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                 <Ionicons name="chatbubble-outline" size={28} color="black" />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={handleSaveNote} style={styles.backArrow}>
+              <TouchableOpacity
+                onPress={handleSaveNote}
+                style={styles.backArrow}
+              >
                 <Ionicons name="checkmark" size={28} color="black" />
               </TouchableOpacity>
             </View>
@@ -202,7 +209,8 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
               multiline
             />
             <Text style={styles.creationDate}>
-              {dateTime} | {charCount} {charCount > 2 ? "characters" : "character"}
+              {dateTime} | {charCount}{" "}
+              {charCount > 2 ? "characters" : "character"}
             </Text>
             <TextInput
               style={styles.inputContent}
@@ -227,13 +235,17 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                     onPress={() => handleBotOptionSelect("note_template")}
                     style={styles.botOptionButton}
                   >
-                    <Text style={styles.botOptionText}>Generate Note Template</Text>
+                    <Text style={styles.botOptionText}>
+                      Generate Note Template
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleBotOptionSelect("idea_generator")}
                     style={styles.botOptionButton}
                   >
-                    <Text style={styles.botOptionText}>Create/Extend Ideas</Text>
+                    <Text style={styles.botOptionText}>
+                      Create/Extend Ideas
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleBotOptionSelect("content_creator")}
@@ -309,7 +321,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     color: "#006769",
-    fontFamily: "Dosis-ExtraBold"
+    fontFamily: "Dosis-ExtraBold",
   },
   botOptionButton: {
     width: "100%",
@@ -323,7 +335,7 @@ const styles = StyleSheet.create({
     color: "black",
     textAlign: "center",
     fontFamily: "Dosis-Bold",
-    fontSize: 16
+    fontSize: 16,
   },
   input: {
     fontSize: 15,

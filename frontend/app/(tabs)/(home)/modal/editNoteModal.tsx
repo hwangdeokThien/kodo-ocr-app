@@ -2,33 +2,33 @@ import { NoteProps } from "@/components/Note";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
-    Modal,
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    StyleSheet,
+  Modal,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 interface EditNoteModalProps {
-    isVisible: boolean;
-    note: NoteProps;
-    onClose: () => void;
-    onSave: (
-        id: number | undefined,
-        title: string,
-        content: string,
-        createdDate: Date,
-        modifiedDate: Date
-    ) => void;
+  isVisible: boolean;
+  note: NoteProps;
+  onClose: () => void;
+  onSave: (
+    id: number | undefined,
+    title: string,
+    content: string,
+    createdDate: Date,
+    modifiedDate: Date
+  ) => void;
 }
 
 const EditNoteModal: React.FC<EditNoteModalProps> = ({
-    isVisible,
-    note,
-    onClose,
-    onSave,
+  isVisible,
+  note,
+  onClose,
+  onSave,
 }) => {
   const [noteTitle, setNoteTitle] = useState(note.title);
   const [noteContent, setNoteContent] = useState(note.content);
@@ -38,17 +38,17 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
   const [formFields, setFormFields] = useState<any>({});
   const AI_URL = process.env.EXPO_PUBLIC_AI_BASE_URL;
 
-    const date = new Date().toLocaleDateString();
-    const time = new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-    });
-    const dateTime = `${date} ${time}`;
+  const date = new Date().toLocaleDateString();
+  const time = new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const dateTime = `${date} ${time}`;
 
-    const handleNoteContentChange = (text: string) => {
-        setNoteContent(text);
-        setCharCount(text.length);
-    };
+  const handleNoteContentChange = (text: string) => {
+    setNoteContent(text);
+    setCharCount(text.length);
+  };
 
   const handleSaveNote = () => {
     onSave(note.id, noteTitle, noteContent, note.createdDate, new Date());
@@ -86,7 +86,7 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
           const resultText = await response.text();
           console.log("API Response (HTML/Text):", resultText);
 
-          setNoteContent(noteContent + '\n\nGenerated:\n' + resultText);
+          setNoteContent(noteContent + "\n\nGenerated:\n" + resultText);
           setFormFields({});
           setBotOption(null);
         } else {
@@ -111,7 +111,9 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
             <TextInput
               placeholder="Key Elements"
               value={formFields.key_elements || ""}
-              onChangeText={(text) => handleFormFieldChange("key_elements", text)}
+              onChangeText={(text) =>
+                handleFormFieldChange("key_elements", text)
+              }
               style={styles.input}
             />
           </View>
@@ -191,7 +193,10 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
                 <Ionicons name="chatbubble-outline" size={28} color="black" />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={handleSaveNote} style={styles.backArrow}>
+              <TouchableOpacity
+                onPress={handleSaveNote}
+                style={styles.backArrow}
+              >
                 <Ionicons name="checkmark" size={28} color="black" />
               </TouchableOpacity>
             </View>
@@ -204,7 +209,8 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
               multiline
             />
             <Text style={styles.creationDate}>
-              {dateTime} | {charCount} {charCount > 2 ? "characters" : "character"}
+              {dateTime} | {charCount}{" "}
+              {charCount > 2 ? "characters" : "character"}
             </Text>
             <TextInput
               style={styles.inputContent}
@@ -231,13 +237,17 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
                     onPress={() => handleBotOptionSelect("note_template")}
                     style={styles.botOptionButton}
                   >
-                    <Text style={styles.botOptionText}>Generate Note Template</Text>
+                    <Text style={styles.botOptionText}>
+                      Generate Note Template
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleBotOptionSelect("idea_generator")}
                     style={styles.botOptionButton}
                   >
-                    <Text style={styles.botOptionText}>Create/Extend Ideas</Text>
+                    <Text style={styles.botOptionText}>
+                      Create/Extend Ideas
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleBotOptionSelect("content_creator")}

@@ -25,7 +25,7 @@ const LoadTextModal: React.FC<LoadTextModalProps> = ({
   isVisible,
   onClose,
   onSave,
-  content
+  content,
 }) => {
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState(content);
@@ -65,31 +65,34 @@ const LoadTextModal: React.FC<LoadTextModalProps> = ({
       style={styles.modalContainer}
     >
       <SafeAreaProvider>
-      <SafeAreaView style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <View
-            style={{ justifyContent: "space-between", flexDirection: "row" }}
-          >
-            <TouchableOpacity
-              onPress={() => onClose()}
-              style={styles.backArrow}
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View
+              style={{ justifyContent: "space-between", flexDirection: "row" }}
             >
-              <Ionicons name="close-outline" size={24} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleSaveNote} style={styles.backArrow}>
-              <Ionicons name="checkmark" size={28} color="black" />
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                onPress={() => onClose()}
+                style={styles.backArrow}
+              >
+                <Ionicons name="close-outline" size={24} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSaveNote}
+                style={styles.backArrow}
+              >
+                <Ionicons name="checkmark" size={28} color="black" />
+              </TouchableOpacity>
+            </View>
 
-          <TextInput
-            style={styles.inputContent}
-            placeholder="Start typing here..."
-            value={noteContent}
-            onChangeText={handleNoteContentChange}
-            multiline
-          />
-        </View>
-      </SafeAreaView>
+            <TextInput
+              style={styles.inputContent}
+              placeholder="Start typing here..."
+              value={noteContent}
+              onChangeText={handleNoteContentChange}
+              multiline
+            />
+          </View>
+        </SafeAreaView>
       </SafeAreaProvider>
     </Modal>
   );
