@@ -264,6 +264,8 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
             <LoadingModal isVisible={isLoading} />
 
           </View>
+
+          <View style={{ position: "absolute", bottom: 0, height: 40, backgroundColor: "white", borderRadius: 20, zIndex: 1 }} />
         </SafeAreaView>
       </SafeAreaProvider>
     </Modal>

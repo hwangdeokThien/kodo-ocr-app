@@ -135,12 +135,11 @@ export default function HomeScreen() {
     }
     db.transaction((tx) => {
       tx.executeSql(
-        "UPDATE notes SET title = ?, content = ?, modifiedDate = ?, createdDate = ? WHERE id = ?",
+        "UPDATE notes SET title = ?, content = ?, modifiedDate = ? WHERE id = ?",
         [
           title,
           content,
           modifiedDate.toISOString(),
-          createdDate.toISOString(),
           id,
         ],
         () => {
@@ -453,7 +452,6 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
-        
       </Modal>
       <ChatBotModal
         isVisible={isChatBotVisible}
