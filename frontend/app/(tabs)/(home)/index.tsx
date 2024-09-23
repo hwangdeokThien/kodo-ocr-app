@@ -453,6 +453,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
+        
       </Modal>
       <ChatBotModal
         isVisible={isChatBotVisible}

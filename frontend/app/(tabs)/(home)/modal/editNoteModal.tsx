@@ -10,6 +10,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import LoadingModal from "@/components/LoadingModal";
 
 interface EditNoteModalProps {
   isVisible: boolean;
@@ -33,6 +34,7 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
   const [noteTitle, setNoteTitle] = useState(note.title);
   const [noteContent, setNoteContent] = useState(note.content);
   const [charCount, setCharCount] = useState(note.content.length);
+  const [isLoading, setIsLoading] = useState(false);
   const [botModalVisible, setBotModalVisible] = useState(false);
   const [botOption, setBotOption] = useState<string | null>(null);
   const [formFields, setFormFields] = useState<any>({});
@@ -70,6 +72,7 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
 
   const renderBotForm = () => {
     const handleApiCall = async () => {
+      setIsLoading(true);
       formFields.prompt_type = botOption;
       const formData = new FormData();
       for (const key in formFields) {
@@ -95,6 +98,8 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
         }
       } catch (error) {
         console.error("API call failed:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -220,10 +225,10 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
               multiline
             />
 
-            {/* Render bot form if an option is selected */}
+            <View style={{position: "absolute", bottom: 0, height: 40, backgroundColor: "white", borderRadius: 20, zIndex: 1}} />
+
             {botOption && renderBotForm()}
 
-            {/* Bot Options Modal */}
             <Modal
               transparent={true}
               visible={botModalVisible}
@@ -258,6 +263,9 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
                 </View>
               </View>
             </Modal>
+
+          <LoadingModal isVisible={isLoading} />
+
           </View>
         </SafeAreaView>
       </SafeAreaProvider>

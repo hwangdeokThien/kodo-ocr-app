@@ -9,6 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+import LoadingModal from "@/components/LoadingModal";
 
 interface AddNoteModalProps {
   isVisible: boolean;
@@ -28,6 +29,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
 }) => {
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [charCount, setCharCount] = useState(0);
   const [botModalVisible, setBotModalVisible] = useState(false);
   const [botOption, setBotOption] = useState<string | null>(null);
@@ -71,6 +73,7 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
 
   const renderBotForm = () => {
     const handleApiCall = async () => {
+      setIsLoading(true);
       formFields.prompt_type = botOption;
       const formData = new FormData();
       for (const key in formFields) {
@@ -96,6 +99,8 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
         }
       } catch (error) {
         console.error("API call failed:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -174,7 +179,6 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
       visible={isVisible}
       animationType="fade"
       onRequestClose={onClose}
-      style={styles.modalContainer}
     >
       <SafeAreaProvider>
         <SafeAreaView style={styles.modalContainer}>
@@ -256,6 +260,9 @@ const AddNoteModal: React.FC<AddNoteModalProps> = ({
                 </View>
               </View>
             </Modal>
+
+            <LoadingModal isVisible={isLoading} />
+
           </View>
         </SafeAreaView>
       </SafeAreaProvider>
