@@ -234,6 +234,7 @@ export default function ImageScan() {
               modifiedDate,
             })
           );
+          console.log('Saved note to local storage!')
 
           handleRemoveImage();
           saveNoteToCloud(insertId, title, content, createdDate, modifiedDate);

@@ -328,6 +328,10 @@ export default function HomeScreen() {
     setEditNoteModalVisible(true);
   };
 
+  useEffect(() => {
+    setFilteredNotes(notesData);
+  }, [notesData]);
+
   return (
     <View style={styles.container}>
       <ParallaxScrollView
