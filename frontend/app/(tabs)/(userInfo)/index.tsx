@@ -23,9 +23,8 @@ type UserInfoProps = {
   username: string;
   name: string;
   email: string;
-  bio: string;
   avatar?: string;
-  dateOfBirth?: Date | string;
+  dateOfBirth?: string;
   location?: string;
   createdAt?: Date;
 };
@@ -33,85 +32,50 @@ type UserInfoProps = {
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
 
-const id = "666af03498a1b21ae5b96fb5";
 const staticData: UserInfoProps = {
   username: "Unknown",
   name: "Unknown",
   email: "Unknown",
-  bio: "",
   avatar: undefined,
   dateOfBirth: undefined,
   location: "Unknown",
   createdAt: undefined,
 };
+
 const AVATAR_STORAGE_KEY = "@user_avatar";
+const USER_INFO_STORAGE_KEY = "@user_info";
 
 export default function UserInfoScreen() {
   const fontsLoaded = loadFonts();
   const [userInfo, setUserInfo] = useState<UserInfoProps>(staticData);
-  const [image, setImage] = useState<any>(null);
+  const [image, setImage] = useState<string | null>(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const URL =
-    Platform.OS === "ios"
-      ? process.env.EXPO_PUBLIC_URL_IOS
-      : process.env.EXPO_PUBLIC_URL_ANDROID;
 
+  // Load user info and avatar from AsyncStorage on component mount
   useEffect(() => {
-    const fetchUserInfo = async () => {
+    const loadUserData = async () => {
       try {
-        const response = await fetch(`${URL}/api/users/${id}`, {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error fetching user data: ${response.status}`);
-        }
-
-        const parseStringToObject = (str: string): Record<string, any> => {
-          const obj: Record<string, any> = {};
-          const pairs = str.match(/(\w+):\s*'(.*?)'/g);
-
-          if (pairs) {
-            pairs.forEach((pair) => {
-              const [key, value] = pair.split(/:\s*'/);
-              const cleanKey = key.trim();
-              const cleanValue = value.replace(/'$/, "").trim();
-              obj[cleanKey] = cleanValue;
-            });
-          }
-          return obj;
-        };
-
-        const textData = await response.text();
-
-        const userData = parseStringToObject(textData) as UserInfoProps;
-        if (userData.dateOfBirth) {
-          const formattedDate = format(
-            new Date(userData.dateOfBirth),
-            "MMMM dd, yyyy"
-          );
-          userData.dateOfBirth = formattedDate;
-          console.log("Formatted Date of Birth:", formattedDate);
-        }
-        setUserInfo(userData);
+        const storedUserInfo = await AsyncStorage.getItem(
+          USER_INFO_STORAGE_KEY
+        );
         const storedAvatar = await AsyncStorage.getItem(AVATAR_STORAGE_KEY);
+
+        if (storedUserInfo) {
+          setUserInfo(JSON.parse(storedUserInfo));
+        }
+
         if (storedAvatar) {
           setImage(storedAvatar);
-        } else if (userData.avatar) {
-          setImage(userData.avatar);
         }
       } catch (err) {
-        console.log(`Error fetching user information: ${err}`);
+        console.log(`Error loading user information: ${err}`);
       }
     };
 
-    fetchUserInfo();
+    loadUserData();
   }, []);
 
+  // Save profile information to AsyncStorage
   const handleSaveProfile = async (
     username: string,
     dateOfBirth: string,
@@ -119,10 +83,8 @@ export default function UserInfoScreen() {
     location: string
   ) => {
     const formattedDate = format(new Date(dateOfBirth), "MMMM dd, yyyy");
-    dateOfBirth = formattedDate;
-    console.log("Formatted Date of Birth:", formattedDate);
     const updatedUserInfo: UserInfoProps = {
-      ...userInfo,
+      name: username,
       username,
       dateOfBirth: formattedDate,
       email,
@@ -131,7 +93,10 @@ export default function UserInfoScreen() {
     setUserInfo(updatedUserInfo);
 
     try {
-      await AsyncStorage.setItem("@user_info", JSON.stringify(updatedUserInfo));
+      await AsyncStorage.setItem(
+        USER_INFO_STORAGE_KEY,
+        JSON.stringify(updatedUserInfo)
+      );
       console.log("User info saved to AsyncStorage");
     } catch (error) {
       console.log("Error saving user info", error);
@@ -139,6 +104,7 @@ export default function UserInfoScreen() {
     setEditModalVisible(false);
   };
 
+  // Edit the user's avatar and save to AsyncStorage
   const editImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -146,27 +112,14 @@ export default function UserInfoScreen() {
       aspect: [1, 1],
       quality: 1,
     });
-    if (!result.canceled) {
+
+    if (!result.canceled && result.assets[0].uri) {
       const selectedImage = result.assets[0].uri;
       setImage(selectedImage);
+
       try {
         await AsyncStorage.setItem(AVATAR_STORAGE_KEY, selectedImage);
         console.log("Avatar saved to AsyncStorage");
-        const uploadResponse = await FileSystem.uploadAsync(
-          `${URL}/api/avatar/${id}`,
-          image.uri,
-          {
-            fieldName: "avatar",
-            httpMethod: "POST",
-            uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-            mimeType: image.mimeType,
-          }
-        );
-        if (uploadResponse.status === 200) {
-          console.log("Save avatar to cloud successfully!");
-        } else {
-          console.log("Save avatar failed!");
-        }
       } catch (error) {
         console.log("Error saving avatar to AsyncStorage", error);
       }
@@ -188,7 +141,6 @@ export default function UserInfoScreen() {
         <View style={{ height: screenWidth * 0.15 }} />
         <View style={styles.content}>
           <Text style={styles.userName}>{userInfo.name}</Text>
-          <Text style={styles.userBio}>{userInfo.bio}</Text>
           <TouchableOpacity
             style={styles.userInfoBox}
             onLongPress={() => setEditModalVisible(true)}
