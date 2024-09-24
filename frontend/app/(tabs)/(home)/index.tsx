@@ -143,7 +143,7 @@ export default function HomeScreen() {
           id,
         ],
         () => {
-          console.log("Note updated with ID:", id); // Log the insertId
+          console.log("Note updated with ID:", id);
           const updatedNotes = notesData.map((note) => {
             if (note.id === id) {
               return {
