@@ -4,7 +4,7 @@ import {
   CameraCapturedPicture,
 } from "expo-camera";
 import { CameraType } from "expo-camera/build/legacy/Camera.types";
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import {
   Image,
   StyleSheet,
@@ -36,11 +36,13 @@ import LoadTextModal from "./modal/loadTextModal";
 import * as SQLite from "expo-sqlite/legacy";
 import LoadingModal from "@/components/LoadingModal";
 import SelectParamsModal from "./modal/selectParamsModal";
+import { useFocusEffect } from "expo-router";
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
 
 export default function ImageScan() {
+  const [focused, setFocused] = useState(false);
   const [facing, setFacing] = useState(CameraType.back);
   const [image, setImage] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,7 +77,18 @@ export default function ImageScan() {
       ]
     );
 
+  useFocusEffect(
+    useCallback(() => {
+      setFocused(true);
+
+      return () => {
+        setFocused(false);
+      };
+    }, [])
+  );
+
   if (!permission) {
+    console.log("Permission not granted or not focused!");
     return <View />;
   }
 
@@ -234,7 +247,7 @@ export default function ImageScan() {
               modifiedDate,
             })
           );
-          console.log('Saved note to local storage!')
+          console.log("Saved note to local storage!");
 
           handleRemoveImage();
           saveNoteToCloud(insertId, title, content, createdDate, modifiedDate);
@@ -312,7 +325,7 @@ export default function ImageScan() {
         <View style={styles.cameraContainer}>
           {image ? (
             <Image source={{ uri: image.uri }} style={styles.imageShow} />
-          ) : permission.granted ? (
+          ) : permission.granted && focused ? (
             <View style={styles.container}>
               <CameraView
                 style={styles.camera}

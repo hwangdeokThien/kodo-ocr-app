@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Text,
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -29,7 +30,7 @@ const LoadTextModal: React.FC<LoadTextModalProps> = ({
 }) => {
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState(content);
-  const [charCount, setCharCount] = useState(0);
+  const [charCount, setCharCount] = useState(content.length);
 
   const date = new Date().toLocaleDateString();
   const time = new Date().toLocaleTimeString([], {
@@ -83,7 +84,17 @@ const LoadTextModal: React.FC<LoadTextModalProps> = ({
                 <Ionicons name="checkmark" size={28} color="black" />
               </TouchableOpacity>
             </View>
-
+            <TextInput
+              style={styles.inputTitle}
+              placeholder="Title"
+              value={noteTitle}
+              onChangeText={setNoteTitle}
+              multiline
+            />
+            <Text style={styles.creationDate}>
+              {dateTime} | {charCount}{" "}
+              {charCount > 2 ? "characters" : "character"}
+            </Text>
             <TextInput
               style={styles.inputContent}
               placeholder="Start typing here..."
