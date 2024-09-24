@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Text,
   FlatList,
+  KeyboardAvoidingView, 
+  Platform
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -107,7 +109,11 @@ const ChatBotModal: React.FC<ChatBotModalProps> = ({ isVisible, onClose }) => {
     >
       <SafeAreaProvider>
         <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{width: "100%"}}
+          >
+            <View style={styles.modalContent}>
             <View
               style={{
                 justifyContent: "space-between",
@@ -144,7 +150,8 @@ const ChatBotModal: React.FC<ChatBotModalProps> = ({ isVisible, onClose }) => {
                 <Ionicons name="send" size={24} color="#006769" />
               </TouchableOpacity>
             </View>
-          </View>
+            </View>
+          </KeyboardAvoidingView>
         </SafeAreaView>
       </SafeAreaProvider>
     </Modal>
