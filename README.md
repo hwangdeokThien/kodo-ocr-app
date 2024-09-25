@@ -17,17 +17,18 @@
 ---
 ## 📱 Application Demo
 
+### Home Screen
+The home screen offers an intuitive overview of your notes, providing easy access to scan or create new notes.
+<img src="./demo/home_ui.png" alt="Home UI" width="250">
+
 ### Chat Bot Interaction
 The chat bot screen allows users to interact with AI-powered features that assist in note generation.
 <img src="./demo/chat_bot.png" alt="Chat Bot" width="250">
 
 ### Creating Note with LLMs
 This screen shows how users can create a note with the help of large language models (LLMs) for additional assistance, such as generating ideas or creating content.
-<img src="./demo/creating_note_with_llms.png" alt="Creating Note" width="250">
 
-### Home Screen
-The home screen offers an intuitive overview of your notes, providing easy access to scan or create new notes.
-<img src="./demo/home_ui.png" alt="Home UI" width="250">
+<img src="./demo/creating_note_with_llms.png" alt="Creating Note" width="250">
 
 ### Loading Note Creation
 While creating a note, a loading screen appears as the app processes the information.
