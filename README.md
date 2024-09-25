@@ -19,31 +19,31 @@
 
 ### Chat Bot Interaction
 The chat bot screen allows users to interact with AI-powered features that assist in note generation.
-![Chat Bot](./demo/chat_bot.png)
+<img src="./demo/chat_bot.png" alt="Chat Bot" width="250">
 
 ### Creating Note with LLMs
 This screen shows how users can create a note with the help of large language models (LLMs) for additional assistance, such as generating ideas or creating content.
-![Creating Note](./demo/creating_note_with_llms.png)
+<img src="./demo/creating_note_with_llms.png" alt="Creating Note" width="250">
 
 ### Home Screen
 The home screen offers an intuitive overview of your notes, providing easy access to scan or create new notes.
-![Home UI](./demo/home_ui.png)
+<img src="./demo/home_ui.png" alt="Home UI" width="250">
 
 ### Loading Note Creation
 While creating a note, a loading screen appears as the app processes the information.
-![Loading Create Note](./demo/loading_create_note.png)
+<img src="./demo/loading_create_note.png" alt="Loading Create Note" width="250">
 
 ### Scan Options
 The scan options screen allows users to select preferences for OCR scanning before proceeding.
-![Scan Options](./demo/scan_option.png)
+<img src="./demo/scan_option.png" alt="Scan Options" width="250">
 
 ### Scanning
 The scan screen visualizes the real-time text extraction process, leveraging OCR technology.
-![Scan](./demo/scan.png)
+<img src="./demo/scan.png" alt="Scan" width="250">
 
 ### User Profile
 The user profile section enables customization of personal information and app settings.
-![User Profile](./demo/user_profile.png)
+<img src="./demo/user_profile.png" alt="User Profile" width="250">
 
 ---
 
