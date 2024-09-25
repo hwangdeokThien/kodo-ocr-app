@@ -15,38 +15,6 @@
 - **Flask** - Managing the AI-powered OCR API.
 
 ---
-## 📱 Application Demo
-
-### Home Screen
-The home screen offers an intuitive overview of your notes, providing easy access to scan or create new notes.
-<img src="./demo/home_ui.png" alt="Home UI" width="250">
-
-### Chat Bot Interaction
-The chat bot screen allows users to interact with AI-powered features that assist in note generation.
-<img src="./demo/chat_bot.png" alt="Chat Bot" width="250">
-
-### Creating Note with LLMs
-This screen shows how users can create a note with the help of large language models (LLMs) for additional assistance, such as generating ideas or creating content.
-
-<img src="./demo/creating_note_with_llms.png" alt="Creating Note" width="250">
-
-### Loading Note Creation
-While creating a note, a loading screen appears as the app processes the information.
-<img src="./demo/loading_create_note.png" alt="Loading Create Note" width="250">
-
-### Scan Options
-The scan options screen allows users to select preferences for OCR scanning before proceeding.
-<img src="./demo/scan_option.png" alt="Scan Options" width="250">
-
-### Scanning
-The scan screen visualizes the real-time text extraction process, leveraging OCR technology.
-<img src="./demo/scan.png" alt="Scan" width="250">
-
-### User Profile
-The user profile section enables customization of personal information and app settings.
-<img src="./demo/user_profile.png" alt="User Profile" width="250">
-
----
 
 ## 🚀 Getting Started -- Running The Application Locally
 
@@ -92,11 +60,50 @@ The user profile section enables customization of personal information and app s
     ```bash
     npx expo start
     ```
+   
+### Additional Configuration
+To be able to run the project, you must fill required enviroment variables that listed in the `env_template` file in each directory with your own values, keys.
 
 ---
 
-### Additional Configuration
-To be able to run the project, you must fill required enviroment variables that listed in the `env_template` file in each directory with your own values, keys.
+## 📱 Application Demo
+
+### Home Screen
+The home screen offers an intuitive overview of your notes, providing easy access to scan or create new notes.
+
+<img src="./demo/home_ui.png" alt="Home UI" width="250">
+
+### Chat Bot Interaction
+The chat bot screen allows users to interact with AI-powered features that assist in note generation.
+
+<img src="./demo/chat_bot.png" alt="Chat Bot" width="250">
+
+### Creating Note with LLMs
+This screen shows how users can create a note with the help of large language models (LLMs) for additional assistance, such as generating ideas or creating content.
+
+<img src="./demo/creating_note_with_llms.png" alt="Creating Note" width="250">
+
+### Loading Note Creation
+While creating a note, a loading screen appears as the app processes the information.
+
+<img src="./demo/loading_create_note.png" alt="Loading Create Note" width="250">
+
+### Scan Options
+The scan options screen allows users to select preferences for OCR scanning before proceeding.
+
+<img src="./demo/scan_option.png" alt="Scan Options" width="250">
+
+### Scanning
+The scan screen visualizes the real-time text extraction process, leveraging OCR technology.
+
+<img src="./demo/scan.png" alt="Scan" width="250">
+
+### User Profile
+The user profile section enables customization of personal information and app settings.
+
+<img src="./demo/user_profile.png" alt="User Profile" width="250">
+
+---
 
 ## 🛠️ Contributing
 
